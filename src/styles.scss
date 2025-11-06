@@ -1,0 +1,449 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Modern Design System Variables */
+:root {
+  --primary-color: #667eea;
+  --primary-dark: #5568d3;
+  --primary-light: #818cf8;
+  --secondary-color: #764ba2;
+  --accent-color: #ec4899;
+  --success-color: #10b981;
+  --error-color: #e53e3e;
+  --warning-color: #f59e0b;
+  --info-color: #3b82f6;
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7fafc;
+  --bg-tertiary: #edf2f7;
+  --bg-dark: #1a202c;
+  
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  --text-light: #ffffff;
+  
+  --border-color: #e2e8f0;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --border-radius-lg: 16px;
+  
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+/* Global Material Dialog Backdrop */
+.cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.cdk-overlay-pane {
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+}
+
+/* Global Material Dialog Container */
+.mat-dialog-container {
+  max-height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Edit Game Dialog */
+.edit-game-dialog .mat-dialog-container {
+  border-radius: var(--border-radius-lg) !important;
+  padding: var(--spacing-xl) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  max-width: 650px !important;
+  width: 100% !important;
+  max-height: 85vh !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.edit-game-dialog .mat-dialog-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  z-index: 1;
+}
+
+/* Logout Dialog */
+.logout-dialog .mat-dialog-container {
+  border-radius: var(--border-radius-lg) !important;
+  padding: var(--spacing-xl) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  max-width: 450px !important;
+  width: 100% !important;
+  max-height: 85vh !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.logout-dialog .mat-dialog-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  z-index: 1;
+}
+
+.logout-dialog mat-dialog-content {
+  overflow: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.logout-dialog mat-dialog-content {
+  overflow: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.logout-dialog mat-dialog-actions {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: auto !important;
+}
+
+/* Responsive Dialog Styles */
+@media (max-width: 768px) {
+  .edit-game-dialog .mat-dialog-container {
+    padding: var(--spacing-lg) !important;
+    max-width: 90vw !important;
+  }
+  
+  .edit-game-dialog .mat-flat-button,
+  .logout-dialog .mat-flat-button {
+    min-width: 100px !important;
+    padding: 0 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-game-dialog .mat-dialog-container,
+  .logout-dialog .mat-dialog-container {
+    padding: var(--spacing-lg) !important;
+    max-width: 90vw !important;
+  }
+  
+  .edit-game-dialog .mat-flat-button,
+  .logout-dialog .mat-flat-button {
+    width: 100% !important;
+    min-width: unset !important;
+    margin-bottom: var(--spacing-xs) !important;
+    
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+/* Material Dialog Content and Actions */
+mat-dialog-content {
+  overflow: visible !important;
+}
+
+mat-dialog-actions {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: auto !important;
+}
+
+/* Material Button Overrides for Modals */
+.edit-game-dialog .mat-flat-button,
+.logout-dialog .mat-flat-button {
+  border-radius: var(--border-radius) !important;
+  min-width: auto !important;
+  line-height: normal !important;
+  padding: 0 20px !important;
+  height: 44px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--spacing-xs) !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  
+  &::before {
+    display: none !important;
+  }
+  
+  .mat-button-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--spacing-xs) !important;
+    line-height: normal !important;
+    width: 100% !important;
+  }
+  
+  .mat-button-ripple {
+    border-radius: var(--border-radius) !important;
+  }
+  
+  .mat-button-focus-overlay {
+    border-radius: var(--border-radius) !important;
+    opacity: 0 !important;
+  }
+  
+  mat-icon {
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  span {
+    display: inline-block !important;
+  }
+}
+
+/* Cancel Button Styles */
+.edit-game-dialog .cancel-button.mat-flat-button,
+.logout-dialog .cancel-button.mat-flat-button {
+  background: #f8f9fa !important;
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  border: 2px solid #e9ecef !important;
+  
+  &:not([disabled]):hover {
+    background: #e9ecef !important;
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:not([disabled]):active {
+    background: #e9ecef !important;
+    background-color: #e9ecef !important;
+  }
+  
+  .mat-button-focus-overlay {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
+/* Update Button Styles (Edit Game Modal) */
+.edit-game-dialog .update-button.mat-flat-button {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  background-color: transparent !important;
+  color: white !important;
+  box-shadow: var(--shadow-md) !important;
+  
+  &:not([disabled]):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg) !important;
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
+    background-color: transparent !important;
+  }
+  
+  &:not([disabled]):active {
+    transform: translateY(0);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    background-color: transparent !important;
+  }
+  
+  .mat-button-focus-overlay {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* Logout Button Styles */
+.logout-dialog .logout-button.mat-flat-button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  background-color: transparent !important;
+  color: white !important;
+  box-shadow: var(--shadow-md) !important;
+  
+  &:not([disabled]):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg) !important;
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+    background-color: transparent !important;
+  }
+  
+  &:not([disabled]):active {
+    transform: translateY(0);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    background-color: transparent !important;
+  }
+  
+  .mat-button-focus-overlay {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* Global Material Design Overrides */
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: var(--border-color);
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: var(--primary-color);
+}
+
+.mat-drawer-side {
+  border-right: none;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Modern Card Styles */
+.card-modern {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  transition: var(--transition);
+  
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* Button Enhancements */
+.mat-raised-button {
+  border-radius: var(--border-radius-sm) !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  transition: var(--transition) !important;
+  box-shadow: var(--shadow-sm) !important;
+  
+  &:hover {
+    box-shadow: var(--shadow-md) !important;
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Snackbar Styles */
+.snackbar-success {
+  background-color: var(--success-color) !important;
+  color: var(--text-light) !important;
+  min-height: 60px;
+  min-width: 300px;
+  font-size: 14px;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-lg);
+}
+
+.snackbar-danger {
+  background-color: var(--error-color) !important;
+  color: var(--text-light) !important;
+  min-height: 60px;
+  min-width: 300px;
+  font-size: 14px;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  .card-modern {
+    padding: var(--spacing-md);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-tertiary);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--text-secondary);
+  }
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}

@@ -1,0 +1,37 @@
+<div class="delete-modal-container">
+  <div class="modal-header">
+    <div class="header-icon-wrapper">
+      <mat-icon class="header-icon">logout</mat-icon>
+    </div>
+    <h2 class="modal-title">Confirm Logout</h2>
+  </div>
+  
+  <mat-dialog-content class="modal-content">
+    <div class="content-wrapper">
+      <p class="confirmation-text">Are you sure you want to logout?</p>
+      <p class="sub-text">You will need to login again to access your account.</p>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions class="modal-actions">
+    <button 
+      type="button"
+      mat-flat-button 
+      (click)="close()" 
+      class="cancel-button"
+    >
+      <mat-icon class="button-icon">close</mat-icon>
+      <span>Cancel</span>
+    </button>
+    <button
+      type="button"
+      mat-flat-button
+      [mat-dialog-close]="1"
+      (click)="logout()"
+      class="logout-button"
+    >
+      <mat-icon class="button-icon">logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-dialog-actions>
+</div>

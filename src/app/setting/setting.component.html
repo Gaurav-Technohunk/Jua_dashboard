@@ -1,0 +1,72 @@
+<div class="setting-container">
+  <!-- Header Section -->
+  <div class="setting-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">settings</mat-icon>
+          Game Settings
+        </h1>
+        <p class="page-subtitle">Configure game settings and credentials for the selected game</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="form-card">
+      <form [formGroup]="settingForm">
+        <div class="form-field-group" *ngFor="let item of labelName">
+          <mat-label class="field-label">
+            <mat-icon class="label-icon">{{ getFieldIcon(item.field) }}</mat-icon>
+            {{ item.name }}
+          </mat-label>
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <input
+              matInput
+              [type]="item.field === 'password' ? 'password' : 'text'"
+              [formControlName]="item.field"
+              [placeholder]="item.placeholder"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="item.field === 'domain'">
+            <mat-error *ngIf="settingForm.controls.domain.touched && settingForm.controls.domain.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="settingForm.controls.domain.errors.required">This field is mandatory</span>
+            </mat-error>
+          </ng-container>
+          <ng-container *ngIf="item.field === 'prefix'">
+            <mat-error *ngIf="settingForm.controls.prefix.touched && settingForm.controls.prefix.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="settingForm.controls.prefix.errors.required">This field is mandatory</span>
+            </mat-error>
+          </ng-container>
+          <ng-container *ngIf="item.field === 'gameName'">
+            <mat-error *ngIf="settingForm.controls.gameName.touched && settingForm.controls.gameName.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="settingForm.controls.gameName.errors.required">This field is mandatory</span>
+            </mat-error>
+          </ng-container>
+          <ng-container *ngIf="item.field === 'userName'">
+            <mat-error *ngIf="settingForm.controls.userName.touched && settingForm.controls.userName.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="settingForm.controls.userName.errors.required">This field is mandatory</span>
+            </mat-error>
+          </ng-container>
+          <ng-container *ngIf="item.field === 'password'">
+            <mat-error *ngIf="settingForm.controls.password.touched && settingForm.controls.password.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="settingForm.controls.password.errors.required">This field is mandatory</span>
+            </mat-error>
+          </ng-container>
+        </div>
+        <div class="form-actions">
+          <button mat-raised-button (click)="onSubmit()" color="primary" class="submit-button">
+            <mat-icon class="button-icon">save</mat-icon>
+            <span>Save Settings</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

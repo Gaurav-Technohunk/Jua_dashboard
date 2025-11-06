@@ -1,0 +1,262 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.edit-modal-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Modal Header
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid #f1f3f5;
+  margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
+  
+  .header-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+    
+    .header-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+  }
+  
+  .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+  
+  .modal-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Modal Form
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// Form Container
+.form-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: var(--spacing-xs);
+  min-height: 0;
+  margin-bottom: var(--spacing-lg);
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f3f5;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 3px;
+    
+    &:hover {
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    }
+  }
+}
+
+// Form Fields
+.form-field-group {
+  margin-bottom: var(--spacing-lg);
+  
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 14px;
+    
+    .label-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #4facfe;
+    }
+  }
+  
+  .custom-form-field {
+    width: 100%;
+    
+    ::ng-deep {
+      .mat-form-field-wrapper {
+        margin: 0;
+        padding: 0;
+      }
+      
+      .mat-form-field-infix {
+        padding: 12px 0;
+        border-top: none;
+      }
+      
+      .mat-form-field-outline {
+        background: #f8f9fa;
+        border-radius: var(--border-radius);
+        border: 2px solid #e9ecef;
+        transition: var(--transition);
+      }
+      
+      .mat-form-field-outline-thick {
+        border-color: #4facfe;
+        border-width: 2px;
+      }
+      
+      .mat-form-field-label {
+        color: #6c757d;
+      }
+      
+      .mat-form-field-label.mat-focused {
+        color: #4facfe;
+      }
+    }
+  }
+  
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: var(--spacing-xs);
+    
+    .error-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid #f1f3f5;
+  margin-top: auto;
+  flex-shrink: 0;
+  
+  button {
+    min-width: 130px;
+    
+    .button-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .modal-header {
+    .header-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      
+      .header-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+    
+    .modal-title {
+      font-size: 20px;
+    }
+    
+    .modal-subtitle {
+      font-size: 13px;
+    }
+  }
+  
+  .form-container {
+    max-height: calc(85vh - 250px);
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+    
+    button {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-header {
+    .header-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      
+      .header-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    .modal-title {
+      font-size: 18px;
+    }
+  }
+  
+  .form-field-group {
+    margin-bottom: var(--spacing-md);
+  }
+}

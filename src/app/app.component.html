@@ -1,0 +1,34 @@
+<ngx-spinner
+  bdColor="rgba(102, 126, 234, 0.98)"
+  size="large"
+  color="#ffffff"
+  type="ball-scale-multiple"
+  [fullScreen]="true"
+  name="mainSpinner"
+  [zIndex]="9999"
+>
+  <div class="custom-loading-content">
+    <div class="loading-logo">
+      <div class="logo-circle">
+        <div class="logo-inner">
+          <div class="logo-core"></div>
+        </div>
+      </div>
+      <div class="spinner-rings">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+      </div>
+    </div>
+    <h3 class="loading-text">Loading</h3>
+    <div class="loading-dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="loading-progress">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+</ngx-spinner>
+<router-outlet></router-outlet>

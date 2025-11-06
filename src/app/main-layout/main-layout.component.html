@@ -1,0 +1,11 @@
+<app-header (toggle)="toggleSidenav()"></app-header>
+<mat-drawer-container>
+  <mat-drawer class="mat-drawer" #sidenav [mode]="isMobile ? 'over' : 'side'" [(opened)]="opened">
+    <app-sidenav></app-sidenav>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div class="main-container">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>
