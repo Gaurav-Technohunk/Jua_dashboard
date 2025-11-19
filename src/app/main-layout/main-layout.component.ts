@@ -24,4 +24,10 @@ export class MainLayoutComponent implements OnInit {
     this.isMobile = window.innerWidth < 768;
     this.opened = !this.isMobile;
   }
+
+  handleNavigation() {
+    if (this.isMobile) {
+      this.opened = false;
+    }
+  }
 }
