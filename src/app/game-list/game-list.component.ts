@@ -27,7 +27,7 @@ export class GameListComponent implements OnInit {
     'action',
   ];
 
-  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource();
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   private spinnerTimeout: any;

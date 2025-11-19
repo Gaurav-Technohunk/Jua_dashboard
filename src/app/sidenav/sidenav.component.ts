@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
@@ -11,7 +11,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./sidenav.component.scss'],
 })
 export class SidenavComponent implements OnInit {
-  @Output() navigate = new EventEmitter<void>();
   constructor(
     private dialog: MatDialog,
     private redeemService: RedeemService
@@ -28,15 +27,9 @@ export class SidenavComponent implements OnInit {
       autoFocus: false,
       disableClose: false,
     });
-    this.onNavigate();
   }
 
   refreshHistoryDetails() {
     this.redeemService.reloadComponent1();
-    this.onNavigate();
-  }
-
-  onNavigate() {
-    this.navigate.emit();
   }
 }
