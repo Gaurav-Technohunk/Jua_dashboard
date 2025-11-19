@@ -1,0 +1,106 @@
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">account_balance_wallet</mat-icon>
+          Manual Credit Load
+        </h1>
+        <p class="page-subtitle">Load specific amount of store credit to a player's account</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="form-card">
+      <form [formGroup]="myForm" (ngSubmit)="onSubmit()" (submit)="$event.preventDefault()">
+        <!-- Game Name Field -->
+        <div class="form-field-group">
+          <mat-label class="field-label">
+            <mat-icon class="label-icon">sports_esports</mat-icon>
+            Game Name
+          </mat-label>
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-select formControlName="selectGameName" (selectionChange)="selectedGameName($event.value)">
+              <mat-option *ngFor="let game of gameList" [value]="game">
+                {{ game }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-error *ngIf="myForm.controls.selectGameName.touched && myForm.controls.selectGameName.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="myForm.controls.selectGameName.errors.required">This field is mandatory</span>
+          </mat-error>
+        </div>
+
+        <!-- Player Username Field -->
+        <div class="form-field-group">
+          <mat-label class="field-label">
+            <mat-icon class="label-icon">person</mat-icon>
+            Player Username
+          </mat-label>
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-icon matPrefix class="input-icon">search</mat-icon>
+            <input
+              #input
+              type="text"
+              (keyup)="filteredUsers(input.value)"
+              matInput
+              formControlName="userName"
+              [matAutocomplete]="auto"
+              placeholder="Search Username"
+            />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+              <mat-option *ngFor="let player of filterPlayers" [value]="player.plUname">
+                <div class="autocomplete-option">
+                  <mat-icon class="option-icon">account_circle</mat-icon>
+                  <span>{{ player.plUname }}</span>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-error *ngIf="myForm.controls.userName.touched && myForm.controls.userName.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="myForm.controls.userName.errors.required">This field is mandatory</span>
+          </mat-error>
+          <mat-error *ngIf="searchText.length > 0 && PlayerName.length == 0" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span>This Customer not available</span>
+          </mat-error>
+        </div>
+
+        <!-- Dynamic Fields -->
+        <div class="form-field-group" *ngFor="let item of labelName">
+          <mat-label class="field-label">
+            <mat-icon class="label-icon">{{ item.field === 'amount' ? 'attach_money' : 'info' }}</mat-icon>
+            {{ item.name }}
+          </mat-label>
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <input
+              matInput
+              [type]="item.type"
+              [formControlName]="item.field"
+              [placeholder]="item.placeholder"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="item.field === 'amount'">
+            <mat-error *ngIf="myForm.controls.amount.touched && myForm.controls.amount.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="myForm.controls.amount.errors.required">This field is mandatory</span>
+            </mat-error>
+          </ng-container>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions">
+          <button type="button" mat-raised-button (click)="onSubmit()" color="primary" class="submit-button">
+            <mat-icon class="button-icon">add_circle</mat-icon>
+            <span>Recharge</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

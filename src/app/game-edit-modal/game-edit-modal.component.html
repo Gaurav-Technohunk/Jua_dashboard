@@ -1,0 +1,79 @@
+<div class="edit-modal-container">
+  <div class="modal-header">
+    <div class="header-icon-wrapper">
+      <mat-icon class="header-icon">edit</mat-icon>
+    </div>
+    <h2 class="modal-title">Edit Game</h2>
+    <p class="modal-subtitle">Update game configuration and credentials</p>
+  </div>
+  
+  <form [formGroup]="settingForm" class="modal-form">
+    <div class="form-container">
+      <div class="form-field-group" *ngFor="let item of labelName">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">{{ getFieldIcon(item.field) }}</mat-icon>
+          {{ item.name }}
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            [type]="item.field === 'password' ? 'password' : 'text'"
+            [formControlName]="item.field"
+            [placeholder]="item.placeholder"
+          />
+        </mat-form-field>
+        <ng-container *ngIf="item.field === 'gameUrl'">
+          <mat-error *ngIf="settingForm.controls.gameUrl.touched && settingForm.controls.gameUrl.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="settingForm.controls.gameUrl.errors.required">This field is mandatory</span>
+          </mat-error>
+        </ng-container>
+        <ng-container *ngIf="item.field === 'prefix'">
+          <mat-error *ngIf="settingForm.controls.prefix.touched && settingForm.controls.prefix.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="settingForm.controls.prefix.errors.required">This field is mandatory</span>
+          </mat-error>
+        </ng-container>
+        <ng-container *ngIf="item.field === 'gameName'">
+          <mat-error *ngIf="settingForm.controls.gameName.touched && settingForm.controls.gameName.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="settingForm.controls.gameName.errors.required">This field is mandatory</span>
+          </mat-error>
+        </ng-container>
+        <ng-container *ngIf="item.field === 'userName'">
+          <mat-error *ngIf="settingForm.controls.userName.touched && settingForm.controls.userName.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="settingForm.controls.userName.errors.required">This field is mandatory</span>
+          </mat-error>
+        </ng-container>
+        <ng-container *ngIf="item.field === 'password'">
+          <mat-error *ngIf="settingForm.controls.password.touched && settingForm.controls.password.invalid" class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            <span *ngIf="settingForm.controls.password.errors.required">This field is mandatory</span>
+          </mat-error>
+        </ng-container>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button 
+        type="button"
+        mat-flat-button 
+        mat-dialog-close 
+        class="cancel-button"
+      >
+        <mat-icon class="button-icon">close</mat-icon>
+        <span>Cancel</span>
+      </button>
+      <button 
+        type="button"
+        mat-flat-button 
+        (click)="onSubmit()" 
+        class="update-button"
+      >
+        <mat-icon class="button-icon">save</mat-icon>
+        <span>Update</span>
+      </button>
+    </div>
+  </form>
+</div>

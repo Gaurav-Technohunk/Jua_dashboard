@@ -1,0 +1,76 @@
+<div class="player-list-container">
+  <!-- Header Section -->
+  <div class="player-list-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">people</mat-icon>
+          Player List
+        </h1>
+        <p class="page-subtitle">View and manage all players grouped by game</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix class="search-icon">search</mat-icon>
+        <input 
+          matInput 
+          [(ngModel)]="searchTerm" 
+          (input)="filterPlayers()" 
+          placeholder="Search by game name or player name"
+          class="search-input"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Game Boxes Section -->
+  <div class="game-row">
+    <div *ngFor="let gameName of objectKeys(groupedPlayers)" class="game-box">
+      <div class="game-header">
+        <div class="game-header-content">
+          <mat-icon class="game-icon">sports_esports</mat-icon>
+          <h3>{{ gameName }}</h3>
+        </div>
+        <span class="player-count">{{ groupedPlayers[gameName].length }} player(s)</span>
+      </div>
+      <div class="player-list-container-inner">
+        <div class="table-wrapper-inner">
+          <mat-table [dataSource]="groupedPlayers[gameName]" matSort class="player-table sticky-header-table">
+            <!-- Player Username Column -->
+            <ng-container matColumnDef="plUname">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">person</mat-icon>
+                  <span>Player's Name</span>
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let player">
+                <div class="cell-content">
+                  <mat-icon class="cell-icon">account_circle</mat-icon>
+                  <span class="cell-text">{{ player.plUname }}</span>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns" class="table-header-row"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
+          </mat-table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data Message -->
+  <div class="no-data-container" *ngIf="objectKeys(groupedPlayers).length === 0">
+    <div class="no-data-content">
+      <mat-icon class="no-data-icon">people_outline</mat-icon>
+      <p class="no-data-text">No players found</p>
+      <p class="no-data-subtext">Register players to see them here</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.delete-modal-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Modal Header
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid #f1f3f5;
+  margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
+  
+  .header-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+    
+    .header-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+  }
+  
+  .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+}
+
+// Modal Content
+.modal-content {
+  padding: var(--spacing-lg) 0;
+  margin: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  
+  .content-wrapper {
+    text-align: center;
+    width: 100%;
+    
+    .confirmation-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm) 0;
+      line-height: 1.5;
+    }
+    
+    .sub-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Modal Actions
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) 0 0 0;
+  margin: 0;
+  border-top: 2px solid #f1f3f5;
+  flex-shrink: 0;
+  
+  button {
+    min-width: 120px;
+    
+    .button-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .modal-header {
+    .header-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      
+      .header-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+    
+    .modal-title {
+      font-size: 20px;
+    }
+  }
+  
+  .modal-content {
+    .content-wrapper {
+      .confirmation-text {
+        font-size: 15px;
+      }
+      
+      .sub-text {
+        font-size: 13px;
+      }
+    }
+  }
+  
+  .modal-actions {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+    
+    button {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+}

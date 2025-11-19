@@ -1,0 +1,18 @@
+<div class="snackbar-container" [ngClass]="getSnackbarClass()">
+  <div class="snackbar-content">
+    <div class="icon-wrapper">
+      <mat-icon class="snackbar-icon">{{ data.icon }}</mat-icon>
+    </div>
+    <div class="message-wrapper">
+      <span class="snackbar-message">{{ data?.message }}</span>
+    </div>
+    <button 
+      class="close-button" 
+      (click)="closeSnackbar()" 
+      mat-icon-button
+      aria-label="Close"
+    >
+      <mat-icon class="close-icon">close</mat-icon>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,178 @@
+<div class="registration-container">
+  <!-- Header Section -->
+  <div class="registration-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">person_add</mat-icon>
+          Player Registration
+        </h1>
+        <p class="page-subtitle">Register a player for the selected game</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="form-card">
+      <!-- Toggle Buttons -->
+      <div class="toggle-buttons">
+        <button 
+          mat-button 
+          (click)="formType = 'single'" 
+          [class.active]="formType === 'single'"
+          class="toggle-button"
+        >
+          <mat-icon class="toggle-icon">person</mat-icon>
+          <span>Single Player Registration</span>
+        </button>
+        <button 
+          mat-button 
+          (click)="formType = 'file'" 
+          [class.active]="formType === 'file'"
+          class="toggle-button"
+        >
+          <mat-icon class="toggle-icon">upload_file</mat-icon>
+          <span>Upload File (CSV/JSON)</span>
+        </button>
+      </div>
+
+      <!-- Single Player Form -->
+      <div *ngIf="formType === 'single'" class="form-content">
+        <form [formGroup]="playerRegistrationForm">
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">sports_esports</mat-icon>
+              Game Name
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <mat-select formControlName="gameName">
+                <mat-option *ngFor="let game of gameList" [value]="game">
+                  {{ game }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error *ngIf="playerRegistrationForm.controls.gameName.touched && playerRegistrationForm.controls.gameName.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="playerRegistrationForm.controls.gameName.errors.required">This field is mandatory</span>
+            </mat-error>
+          </div>
+
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">person</mat-icon>
+              Player Username
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <input
+                matInput
+                type="text"
+                formControlName="plUname"
+                placeholder="Enter username"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="playerRegistrationForm.controls.plUname.touched && playerRegistrationForm.controls.plUname.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="playerRegistrationForm.controls.plUname.errors.required">This field is mandatory</span>
+            </mat-error>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button (click)="onSubmit()" color="primary" class="submit-button">
+              <mat-icon class="button-icon">person_add</mat-icon>
+              <span>Register Player</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- File Upload Form -->
+      <div *ngIf="formType === 'file'" class="form-content">
+        <form>
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">upload_file</mat-icon>
+              Select File
+            </mat-label>
+            <div class="file-upload-wrapper">
+              <input 
+                type="file" 
+                (change)="onFileChange($event)" 
+                accept=".csv,.json"
+                class="file-input"
+                id="fileInput"
+              />
+              <label for="fileInput" class="file-upload-label">
+                <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                <span>Choose file or drag it here</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button (click)="uploadCsvFile()" type="submit" color="primary" class="submit-button">
+              <mat-icon class="button-icon">upload</mat-icon>
+              <span>Upload File</span>
+            </button>
+          </div>
+
+          <!-- Download Templates -->
+          <div class="download-templates">
+            <h4 class="templates-title">
+              <mat-icon class="title-icon">download</mat-icon>
+              Download Templates
+            </h4>
+            <p class="templates-description">For reference, download the templates to check the correct file format:</p>
+            <div class="template-buttons">
+              <button mat-button (click)="downloadCSVTemplate()" class="template-button">
+                <mat-icon class="button-icon">description</mat-icon>
+                <span>Download CSV Template</span>
+              </button>
+              <button mat-button (click)="downloadJSONTemplate()" class="template-button">
+                <mat-icon class="button-icon">code</mat-icon>
+                <span>Download JSON Template</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- File Upload Guidelines -->
+          <div class="file-upload-notes">
+            <h4 class="notes-title">
+              <mat-icon class="title-icon">info</mat-icon>
+              File Upload Guidelines
+            </h4>
+            <ul class="notes-list">
+              <li>
+                <strong>CSV File:</strong> Ensure the file is in CSV format with comma-separated values. 
+                The first row should contain headers such as <strong>Username, Game Name</strong>.
+              </li>
+              <li>
+                <strong>JSON File:</strong> Ensure the file is in JSON format with an array of player objects. 
+                Each object should include <strong>plUname</strong> and <strong>gameName</strong>.
+              </li>
+              <li>Both CSV and JSON files must not exceed <strong>5MB</strong> in size.</li>
+              <li>The file should contain only valid data (no empty or invalid entries). Invalid entries will not be saved.</li>
+              <li>If you encounter an error during upload, please verify the file format and ensure all fields are filled out correctly.</li>
+            </ul>
+          </div>
+        </form>
+      </div>
+
+      <!-- Invalid Players -->
+      <div *ngIf="invalidPlayers.length > 0 && formType == 'file'" class="invalid-players">
+        <h4 class="invalid-title">
+          <mat-icon class="title-icon">error</mat-icon>
+          Invalid Players
+        </h4>
+        <ul class="invalid-list">
+          <li *ngFor="let player of invalidPlayers">
+            <mat-icon class="list-icon">person_off</mat-icon>
+            <div class="player-info">
+              <strong>Username:</strong> {{ player.plUname }} - <strong>Game:</strong> {{ player.gameName }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
