@@ -40,7 +40,11 @@
       </div>
       <div class="player-list-container-inner">
         <div class="table-wrapper-inner">
-          <mat-table [dataSource]="groupedPlayers[gameName]" matSort class="player-table sticky-header-table">
+          <mat-table
+            [dataSource]="groupedPlayers[gameName]"
+            matSort
+            class="player-table sticky-header-table responsive-table"
+          >
             <!-- Player Username Column -->
             <ng-container matColumnDef="plUname">
               <mat-header-cell *matHeaderCellDef>
@@ -49,7 +53,10 @@
                   <span>Player's Name</span>
                 </div>
               </mat-header-cell>
-              <mat-cell *matCellDef="let player">
+              <mat-cell
+                *matCellDef="let player"
+                [attr.data-label]="'Player Name'"
+              >
                 <div class="cell-content">
                   <mat-icon class="cell-icon">account_circle</mat-icon>
                   <span class="cell-text">{{ player.plUname }}</span>

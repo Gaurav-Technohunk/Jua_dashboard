@@ -6,6 +6,7 @@
         mat-list-item
         routerLink="form"
         routerLinkActive="list-item-active"
+        (click)="onNavigate()"
       >
         <span> <mat-icon class="mat-icon">home</mat-icon> Dashboard</span>
       </a>
@@ -14,6 +15,7 @@
         mat-list-item
         routerLink="manual-redeem"
         routerLinkActive="list-item-active"
+        (click)="onNavigate()"
       >
         <span>
           <mat-icon class="mat-icon">dashboard</mat-icon> Manual Redeem
@@ -23,6 +25,7 @@
         class="mat-list-item mb-2"
         mat-list-item
         routerLinkActive="list-item-active"
+        (click)="onNavigate()"
       >
         <span>
           <mat-icon class="mat-icon">dashboard</mat-icon> Domain Emails
@@ -33,6 +36,7 @@
         mat-list-item
         routerLink="setting"
         routerLinkActive="list-item-active"
+        (click)="onNavigate()"
       >
         <span> <mat-icon class="mat-icon">settings</mat-icon> Settings </span>
       </a>
@@ -41,6 +45,7 @@
         mat-list-item
         routerLink="game-list"
         routerLinkActive="list-item-active"
+        (click)="onNavigate()"
       >
         <span> <mat-icon class="mat-icon">view_list</mat-icon> Game List </span>
       </a>
@@ -49,7 +54,7 @@
         mat-list-item
         routerLink="history"
         routerLinkActive="list-item-active"
-        (click)="refreshHistoryDetails()"
+        (click)="refreshHistoryDetails(); onNavigate()"
       >
         <span> <mat-icon class="mat-icon">history</mat-icon> History </span>
       </a>
@@ -58,6 +63,7 @@
         mat-list-item
         routerLink="player-registration"
         routerLinkActive="list-item-active"
+        (click)="onNavigate()"
       >
         <span>
           <mat-icon class="mat-icon">person_add</mat-icon> Register Player
@@ -68,6 +74,7 @@
       mat-list-item
       routerLink="player-list"
       routerLinkActive="list-item-active"
+      (click)="onNavigate()"
     >
       <span>
         <mat-icon class="mat-icon">person</mat-icon> Player's List

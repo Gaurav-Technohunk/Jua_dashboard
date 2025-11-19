@@ -1,7 +1,7 @@
 <app-header (toggle)="toggleSidenav()"></app-header>
 <mat-drawer-container>
   <mat-drawer class="mat-drawer" #sidenav [mode]="isMobile ? 'over' : 'side'" [(opened)]="opened">
-    <app-sidenav></app-sidenav>
+    <app-sidenav (navigate)="handleNavigation()"></app-sidenav>
   </mat-drawer>
   <mat-drawer-content>
     <div class="main-container">
