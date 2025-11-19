@@ -30,8 +30,8 @@
   <!-- Table Section -->
   <div class="table-section">
     <div class="table-card">
-      <div class="table-wrapper desktop-table">
-        <table mat-table [dataSource]="dataSource" class="history-table sticky-header-table responsive-table">
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource" class="history-table sticky-header-table">
           <!-- Game Name Column -->
           <ng-container matColumnDef="gameName">
             <th mat-header-cell *matHeaderCellDef>
@@ -40,12 +40,7 @@
                 <span>Game Name</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="game-name-cell"
-              [attr.data-label]="'Game Name'"
-            >
+            <td mat-cell *matCellDef="let element" class="game-name-cell">
               <div class="cell-content">
                 <mat-icon class="cell-icon">videogame_asset</mat-icon>
                 <span class="cell-text">{{
@@ -63,12 +58,7 @@
                 <span>Player's Name</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="player-name-cell"
-              [attr.data-label]="'Player Name'"
-            >
+            <td mat-cell *matCellDef="let element" class="player-name-cell">
               <div class="cell-content">
                 <mat-icon class="cell-icon">account_circle</mat-icon>
                 <span class="cell-text">{{
@@ -86,12 +76,7 @@
                 <span>Date</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="date-cell"
-              [attr.data-label]="'Date'"
-            >
+            <td mat-cell *matCellDef="let element" class="date-cell">
               <div class="cell-content">
                 <mat-icon class="cell-icon">schedule</mat-icon>
                 <span class="cell-text">{{ element.date }}</span>
@@ -107,12 +92,7 @@
                 <span>Amount</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="amount-cell"
-              [attr.data-label]="'Amount'"
-            >
+            <td mat-cell *matCellDef="let element" class="amount-cell">
               <div class="amount-content">
                 <span class="amount-value">{{
                   element.redeem
@@ -131,12 +111,7 @@
                 <span>Action</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="action-cell"
-              [attr.data-label]="'Action'"
-            >
+            <td mat-cell *matCellDef="let element" class="action-cell">
               <span
                 [ngClass]="element.redeem ? 'action-badge action-redeem' : 'action-badge action-recharge'"
               >
@@ -154,12 +129,7 @@
                 <span>Status</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="status-cell"
-              [attr.data-label]="'Status'"
-            >
+            <td mat-cell *matCellDef="let element" class="status-cell">
               <span
                 [ngClass]="
                   element.status === 'Success' || element.status === 'success'
@@ -189,12 +159,7 @@
                 <span>Message</span>
               </div>
             </th>
-            <td
-              mat-cell
-              *matCellDef="let element"
-              class="message-cell"
-              [attr.data-label]="'Message'"
-            >
+            <td mat-cell *matCellDef="let element" class="message-cell">
               <div class="message-content">
                 <span class="message-text" [title]="element.message">{{ element.message }}</span>
               </div>
@@ -206,70 +171,11 @@
         </table>
         
         <!-- No data message -->
-        <div class="no-data-container" *ngIf="(dataSource.filteredData?.length || 0) === 0">
+        <div class="no-data-container" *ngIf="dataSource.data.length === 0">
           <div class="no-data-content">
             <mat-icon class="no-data-icon">inbox</mat-icon>
             <p class="no-data-text">No transactions found</p>
             <p class="no-data-subtext">Try adjusting your search criteria</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="mobile-card-list" *ngIf="dataSource.filteredData?.length">
-        <div class="history-card" *ngFor="let element of dataSource.filteredData">
-          <div class="card-header">
-            <div class="title">
-              <mat-icon>sports_esports</mat-icon>
-              <span>{{ element.redeem ? element.redeem.gameName : element.coins.gameName }}</span>
-            </div>
-            <div class="date-chip">
-              <mat-icon>calendar_today</mat-icon>
-              <span>{{ element.date }}</span>
-            </div>
-          </div>
-
-          <div class="card-row">
-            <span class="label">Player</span>
-            <div class="value">
-              <mat-icon>person</mat-icon>
-              <span>{{ element.redeem ? element.redeem.username : element.coins.username }}</span>
-            </div>
-          </div>
-
-          <div class="card-row">
-            <span class="label">Amount</span>
-            <span class="amount-value">
-              {{ element.redeem ? element.redeem.amount : element.coins.coin }}$
-            </span>
-          </div>
-
-          <div class="card-row badge-row">
-            <span
-              class="action-badge"
-              [ngClass]="element.redeem ? 'action-redeem' : 'action-recharge'"
-            >
-              <mat-icon class="badge-icon">{{ element.redeem ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
-              {{ element.redeem ? 'Redeem' : 'Recharge' }}
-            </span>
-
-            <span
-              class="status-badge"
-              [ngClass]="
-                element.status === 'Success' || element.status === 'success'
-                  ? 'status-success'
-                  : 'status-failed'
-              "
-            >
-              <mat-icon class="badge-icon">{{
-                element.status === 'Success' || element.status === 'success' ? 'check_circle' : 'error'
-              }}</mat-icon>
-              {{ element.status === 'Success' || element.status === 'success' ? 'Success' : 'Failed' }}
-            </span>
-          </div>
-
-          <div class="card-row">
-            <span class="label">Message</span>
-            <span class="message-text">{{ element.message }}</span>
           </div>
         </div>
       </div>
