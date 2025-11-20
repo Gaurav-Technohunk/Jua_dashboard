@@ -277,6 +277,45 @@
   }
 }
 
+.player-card-list {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-md);
+
+  .player-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid #e5e7eb;
+    padding: var(--spacing-md);
+
+    .card-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .label {
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+      }
+
+      .value {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        color: var(--text-primary);
+
+        mat-icon {
+          color: #fa709a;
+        }
+      }
+    }
+  }
+}
+
 // Table Styles
 .player-table {
   width: 100%;
@@ -448,6 +487,16 @@
     gap: var(--spacing-md);
   }
 
+  .player-list-container-inner {
+    .table-wrapper-inner {
+      display: none;
+    }
+
+    .player-card-list {
+      display: flex;
+    }
+  }
+
   .game-header {
     padding: var(--spacing-md);
     
@@ -497,6 +546,12 @@
     width: 100%;
   }
   
+  .player-list-container-inner {
+    .player-card-list {
+      gap: var(--spacing-sm);
+    }
+  }
+
   .game-header {
     flex-direction: column;
     align-items: flex-start;

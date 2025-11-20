@@ -119,4 +119,8 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
   }
+
+  trackPlayerBy(index: number, player: any) {
+    return player?.plUname ?? index;
+  }
 }

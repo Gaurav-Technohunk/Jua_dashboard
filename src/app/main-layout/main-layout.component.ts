@@ -19,6 +19,12 @@ export class MainLayoutComponent implements OnInit {
     this.opened = !this.opened;
   }
 
+  handleSidenavNavigate() {
+    if (this.isMobile) {
+      this.opened = false;
+    }
+  }
+
   @HostListener('window:resize', ['$event'])
   checkScreenSize() {
     this.isMobile = window.innerWidth < 768;

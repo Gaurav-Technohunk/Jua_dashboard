@@ -150,6 +150,94 @@
   }
 }
 
+.mobile-card-list {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: #f8f9fa;
+
+  .game-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid #e5e7eb;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+
+      .title {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+
+        mat-icon {
+          color: #4facfe;
+        }
+
+        .title-text {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .game-name {
+            font-weight: 700;
+            color: var(--text-primary);
+          }
+
+          .user-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+          }
+        }
+      }
+    }
+
+    .card-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .label {
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+      }
+
+      .value {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        color: var(--text-primary);
+        word-break: break-word;
+
+        &.password {
+          font-family: 'Courier New', monospace;
+          letter-spacing: 1px;
+        }
+
+        &.link {
+          color: #0ea5e9;
+          text-decoration: none;
+
+          mat-icon {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+  }
+}
+
 // Table Styles
 .game-list-table {
   width: 100%;
@@ -411,8 +499,17 @@
   
   .table-section {
     .table-wrapper {
-      max-height: calc(100vh - 350px);
+      max-height: none;
     }
+
+    .game-list-table {
+      display: none;
+    }
+  }
+
+  .mobile-card-list {
+    display: flex;
+    padding: var(--spacing-md);
   }
   
   ::ng-deep {
@@ -454,8 +551,16 @@
   
   .table-section {
     .table-wrapper {
-      max-height: calc(100vh - 300px);
+      max-height: none;
     }
+
+    .game-list-table {
+      display: none;
+    }
+  }
+
+  .mobile-card-list {
+    padding: var(--spacing-sm);
   }
   
   ::ng-deep {

@@ -1,9 +1,7 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
 import { RedeemService } from 'src/services/redeem.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-sidenav',
@@ -11,6 +9,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./sidenav.component.scss'],
 })
 export class SidenavComponent implements OnInit {
+
+  @Output() navigate = new EventEmitter<void>();
+
   constructor(
     private dialog: MatDialog,
     private redeemService: RedeemService
@@ -31,5 +32,9 @@ export class SidenavComponent implements OnInit {
 
   refreshHistoryDetails() {
     this.redeemService.reloadComponent1();
+  }
+
+  onNavClick() {
+    this.navigate.emit();
   }
 }

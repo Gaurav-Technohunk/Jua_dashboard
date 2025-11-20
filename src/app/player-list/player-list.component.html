@@ -61,6 +61,20 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
           </mat-table>
         </div>
+        <div class="player-card-list">
+          <div
+            class="player-card"
+            *ngFor="let player of groupedPlayers[gameName]; trackBy: trackPlayerBy"
+          >
+            <div class="card-row">
+              <span class="label">Player Username</span>
+              <div class="value">
+                <mat-icon>account_circle</mat-icon>
+                <span>{{ player.plUname }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

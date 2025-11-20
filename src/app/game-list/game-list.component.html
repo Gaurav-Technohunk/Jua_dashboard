@@ -133,6 +133,60 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
         </table>
         
+        <div class="mobile-card-list" *ngIf="mobileGames.length">
+          <div
+            class="game-card"
+            *ngFor="let element of mobileGames; trackBy: trackGameById"
+          >
+            <div class="card-header">
+              <div class="title">
+                <mat-icon>sports_esports</mat-icon>
+                <div class="title-text">
+                  <span class="game-name">{{ element.gameName }}</span>
+                  <span class="user-name">&#64;{{ element.userName }}</span>
+                </div>
+              </div>
+              <button
+                mat-icon-button
+                (click)="openEditModal(element.id)"
+                color="primary"
+                matTooltip="Edit Record"
+                class="edit-button"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+
+            <div class="card-row">
+              <span class="label">Game URL</span>
+              <a
+                [href]="element.gameUrl"
+                target="_blank"
+                rel="noopener"
+                class="value link"
+              >
+                <mat-icon>link</mat-icon>
+                <span>{{ element.gameUrl }}</span>
+              </a>
+            </div>
+
+            <div class="card-row">
+              <span class="label">Suffix</span>
+              <span class="badge-text value">{{ element.suffix || '- -' }}</span>
+            </div>
+
+            <div class="card-row">
+              <span class="label">Prefix</span>
+              <span class="badge-text value">{{ element.prefix || '- -' }}</span>
+            </div>
+
+            <div class="card-row">
+              <span class="label">Password</span>
+              <span class="value password">{{ element.password }}</span>
+            </div>
+          </div>
+        </div>
+        
         <!-- No data message -->
         <div class="no-data-container" *ngIf="dataSource.data.length === 0">
           <div class="no-data-content">
@@ -151,6 +205,7 @@
           [pageSize]="10"
           showFirstLastButtons
           class="custom-paginator"
+          (page)="onTableInteraction()"
         >
         </mat-paginator>
       </div>

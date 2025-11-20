@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -13,9 +13,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './game-list.component.html',
   styleUrls: ['./game-list.component.scss'],
 })
-export class GameListComponent implements OnInit {
+export class GameListComponent implements OnInit, AfterViewInit, OnDestroy {
   gameList: any[] = [];
   subscription: Subscription;
+  private sortSubscription?: Subscription;
   displayedColumns: string[] = [
     'gameName',
     'userName',
@@ -31,6 +32,7 @@ export class GameListComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   private spinnerTimeout: any;
+  mobileGames: any[] = [];
   
   constructor(
     private redeemService: RedeemService,
@@ -46,8 +48,18 @@ export class GameListComponent implements OnInit {
     this.fetchGameList();
   }
 
+  ngAfterViewInit(): void {
+    this.sortSubscription = this.sort.sortChange.subscribe(() => {
+      this.paginator.firstPage();
+      this.updateMobileCards();
+    });
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    if (this.sortSubscription) {
+      this.sortSubscription.unsubscribe();
+    }
     // Clear spinner timeout if component is destroyed
     if (this.spinnerTimeout) {
       clearTimeout(this.spinnerTimeout);
@@ -79,6 +91,7 @@ export class GameListComponent implements OnInit {
         this.dataSource = new MatTableDataSource(this.gameList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.updateMobileCards();
       },
       error: (err) => {
         // Clear the timeout and hide spinner on error
@@ -91,6 +104,10 @@ export class GameListComponent implements OnInit {
     });
   }
 
+  onTableInteraction() {
+    this.updateMobileCards();
+  }
+
   openEditModal(gameId: string) {
     this.dialog.open(GameEditModalComponent, {
       data: { gameId: gameId },
@@ -101,5 +118,26 @@ export class GameListComponent implements OnInit {
       autoFocus: false,
       disableClose: false,
     });
+  }
+
+  private updateMobileCards() {
+    if (!this.dataSource) {
+      this.mobileGames = [];
+      return;
+    }
+
+    const data = (this.dataSource.filteredData ?? this.dataSource.data) || [];
+
+    if (!this.paginator) {
+      this.mobileGames = data;
+      return;
+    }
+
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    this.mobileGames = data.slice(startIndex, startIndex + this.paginator.pageSize);
+  }
+
+  trackGameById(index: number, item: any) {
+    return item?.id ?? item?.gameName ?? index;
   }
 }
