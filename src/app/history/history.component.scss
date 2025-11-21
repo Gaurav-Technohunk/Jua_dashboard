@@ -43,7 +43,7 @@
   animation: slideIn 0.5s ease-out;
   
   .header-content {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-xl);
@@ -120,7 +120,7 @@
   animation: slideIn 0.6s ease-out;
   
   .search-container {
-    background: white;
+    background: var(--surface-card);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-md);
@@ -148,19 +148,19 @@
         }
         
         .mat-form-field-outline {
-          background: #f8f9fa;
+          background: var(--surface-muted);
           border-radius: var(--border-radius);
           border: 2px solid #e9ecef;
           transition: var(--transition);
         }
         
         .mat-form-field-outline-thick {
-          border-color: #667eea;
+          border-color: var(--brand-primary);
           border-width: 2px;
         }
         
         .mat-form-field-prefix {
-          color: #667eea;
+          color: var(--brand-primary);
           margin-right: var(--spacing-sm);
         }
         
@@ -169,7 +169,7 @@
         }
         
         .mat-form-field-label.mat-focused {
-          color: #667eea;
+          color: var(--brand-primary);
         }
       }
       
@@ -193,7 +193,7 @@
   animation: slideIn 0.7s ease-out;
   
   .table-card {
-    background: white;
+    background: var(--surface-card);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
@@ -216,15 +216,15 @@
     }
     
     &::-webkit-scrollbar-track {
-      background: #f1f3f5;
+      background: var(--surface-neutral);
     }
     
     &::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
       border-radius: 4px;
       
       &:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background: linear-gradient(135deg, var(--brand-secondary) 0%, var(--brand-primary) 100%);
       }
     }
   }
@@ -237,7 +237,7 @@
   padding: var(--spacing-lg);
 
   .history-card {
-    background: white;
+    background: var(--surface-card);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
     border: 1px solid #e5e7eb;
@@ -260,7 +260,7 @@
         color: var(--text-primary);
 
         mat-icon {
-          color: #667eea;
+          color: var(--brand-primary);
         }
       }
 
@@ -331,7 +331,7 @@
 // Table Styles
 .history-table {
   width: 100%;
-  background: white;
+  background: var(--surface-card);
   
   .header-cell-content {
     display: flex;
@@ -344,7 +344,7 @@
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #667eea;
+      color: var(--brand-primary);
     }
   }
   
@@ -562,7 +562,7 @@
 // Paginator
 .paginator-container {
   border-top: 1px solid #e9ecef;
-  background: #f8f9fa;
+  background: var(--surface-muted);
   padding: var(--spacing-sm) 0;
   
   ::ng-deep {
@@ -580,7 +580,7 @@
       }
       
       .mat-icon-button {
-        color: #667eea;
+        color: var(--brand-primary);
         
         &:hover {
           background: rgba(102, 126, 234, 0.1);
@@ -593,7 +593,7 @@
       
       .mat-paginator-navigation-previous,
       .mat-paginator-navigation-next {
-        color: #667eea;
+        color: var(--brand-primary);
       }
     }
   }
@@ -759,3 +759,5 @@
     padding: var(--spacing-md);
   }
 }
+
+

@@ -1,0 +1,45 @@
+<div class="delete-modal-container">
+  <div class="modal-header">
+    <div class="icon-container">
+      <div class="icon-circle">
+        <mat-icon class="header-icon">warning</mat-icon>
+      </div>
+    </div>
+    <h2 class="modal-title">Delete Organization</h2>
+    <p class="modal-subtitle">This action cannot be undone</p>
+  </div>
+  
+  <div class="modal-content">
+    <div class="warning-message">
+      <mat-icon class="warning-icon">info</mat-icon>
+      <p>
+        Are you sure you want to delete <strong>{{ organizationName }}</strong>? 
+        This will permanently remove the organization and all associated data.
+      </p>
+    </div>
+  </div>
+  
+  <div class="modal-actions">
+    <button 
+      type="button"
+      mat-flat-button 
+      (click)="close()"
+      class="cancel-button"
+      [disabled]="isLoading"
+    >
+      <span>Cancel</span>
+    </button>
+    <button 
+      type="button"
+      mat-flat-button 
+      (click)="confirmDelete()"
+      class="delete-button"
+      [disabled]="isLoading"
+    >
+      <mat-icon class="button-icon" *ngIf="!isLoading">delete</mat-icon>
+      <mat-icon class="button-icon spinner" *ngIf="isLoading">hourglass_empty</mat-icon>
+      <span>{{ isLoading ? 'Deleting...' : 'Delete' }}</span>
+    </button>
+  </div>
+</div>
+

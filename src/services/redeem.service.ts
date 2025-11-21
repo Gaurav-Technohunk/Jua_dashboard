@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { creditLoad, gameList, redeemForm, settingForm } from './interface';
+import { adminUserForm, creditLoad, gameList, organizationForm, redeemForm, settingForm } from './interface';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
@@ -68,5 +68,41 @@ export class RedeemService {
 
   uploadJson(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/api/customer/json/upload`, formData);
+  }
+
+  createOrganization(data: organizationForm): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/organizations`, data);
+  }
+
+  getOrganizations(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/organizations`);
+  }
+
+  updateOrganization(orgId: string, data: organizationForm): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/organizations/${orgId}`, data);
+  }
+
+  deleteOrganization(orgId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/organizations/${orgId}`);
+  }
+
+  createAdminUser(data: adminUserForm): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/register`, data);
+  }
+
+  getAdminUsers(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/users`);
+  }
+
+  getAdminUsersByOrganization(orgId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/organizations/${orgId}/admins`);
+  }
+
+  updateAdminUser(username: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/users/${username}`, data);
+  }
+
+  deleteAdminUser(username: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/users/${username}`);
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, Event } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from '../services/auth.service';
+import { ThemeService } from 'src/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ export class AppComponent implements OnInit{
   constructor(
     private spinner: NgxSpinnerService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private themeService: ThemeService
   ) {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
@@ -29,6 +31,8 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.themeService.init();
+
     // Show spinner on initial load
     this.spinner.show(this.spinnerName);
     

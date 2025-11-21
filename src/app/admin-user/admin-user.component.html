@@ -1,0 +1,389 @@
+<div class="admin-user-container">
+  <!-- Header Section -->
+  <div class="admin-user-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">admin_panel_settings</mat-icon>
+          {{ viewMode === 'create' ? 'Create Admin User' : 'View Admin Users' }}
+        </h1>
+        <p class="page-subtitle">
+          {{ viewMode === 'create' ? 'Create a new admin user for an organization with login credentials' : 'View and manage all admin users across organizations' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="form-card">
+      <!-- Toggle Buttons -->
+      <div class="toggle-buttons">
+        <button 
+          mat-button 
+          (click)="onViewModeChange('create')" 
+          [class.active]="viewMode === 'create'"
+          class="toggle-button"
+        >
+          <mat-icon class="toggle-icon">person_add</mat-icon>
+          <span>Create Admin User</span>
+        </button>
+        <button 
+          mat-button 
+          (click)="onViewModeChange('view')" 
+          [class.active]="viewMode === 'view'"
+          class="toggle-button"
+        >
+          <mat-icon class="toggle-icon">list</mat-icon>
+          <span>View Admin Users</span>
+        </button>
+      </div>
+
+      <!-- Create Admin User Form -->
+      <div *ngIf="viewMode === 'create'" class="form-content">
+        <form [formGroup]="adminUserForm" (ngSubmit)="onSubmit()" (submit)="$event.preventDefault()">
+          <!-- Role Selection Field -->
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">admin_panel_settings</mat-icon>
+              Role
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <mat-select 
+                formControlName="role" 
+                placeholder="Select Role"
+              >
+                <mat-option 
+                  *ngFor="let role of roles" 
+                  [value]="role.value"
+                >
+                  {{ role.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error *ngIf="adminUserForm.controls.role.touched && adminUserForm.controls.role.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="adminUserForm.controls.role.errors?.['required']">Please select a role</span>
+            </mat-error>
+          </div>
+
+          <!-- Organization Selection Field -->
+          <div class="form-field-group" *ngIf="adminUserForm.get('role')?.value === 'ORG_ADMIN'">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">business</mat-icon>
+              Organization
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <mat-select 
+                formControlName="organizationId" 
+                placeholder="Select an organization"
+                [disabled]="loadingOrganizations"
+              >
+                <mat-option *ngIf="loadingOrganizations" disabled>
+                  <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+                  Loading organizations...
+                </mat-option>
+                <mat-option 
+                  *ngFor="let org of organizationsList" 
+                  [value]="org.id"
+                >
+                  <div class="org-option">
+                    <mat-icon class="org-option-icon">domain</mat-icon>
+                    <span>{{ org.name }}</span>
+                  </div>
+                </mat-option>
+                <mat-option *ngIf="!loadingOrganizations && organizationsList.length === 0" disabled>
+                  No organizations available
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error *ngIf="adminUserForm.controls.organizationId.touched && adminUserForm.controls.organizationId.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="adminUserForm.controls.organizationId.errors?.['required']">Please select an organization</span>
+            </mat-error>
+          </div>
+
+          <!-- Username Field -->
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">person</mat-icon>
+              Username
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <input
+                matInput
+                type="text"
+                formControlName="username"
+                placeholder="Enter admin username"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="adminUserForm.controls.username.touched && adminUserForm.controls.username.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="adminUserForm.controls.username.errors?.['required']">This field is mandatory</span>
+              <span *ngIf="adminUserForm.controls.username.errors?.['minlength']">Username must be at least 3 characters</span>
+              <span *ngIf="adminUserForm.controls.username.errors?.['duplicate']">This username already exists. Please choose another one.</span>
+            </mat-error>
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">email</mat-icon>
+              Email
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="Enter email address"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="adminUserForm.controls.email.touched && adminUserForm.controls.email.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="adminUserForm.controls.email.errors?.['required']">This field is mandatory</span>
+              <span *ngIf="adminUserForm.controls.email.errors?.['email']">Please enter a valid email address</span>
+              <span *ngIf="adminUserForm.controls.email.errors?.['duplicate']">This email already exists. Please choose another one.</span>
+            </mat-error>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">lock</mat-icon>
+              Password
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Enter password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="togglePasswordVisibility('password')"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword"
+                class="password-toggle-button"
+              >
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-error *ngIf="adminUserForm.controls.password.touched && adminUserForm.controls.password.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="adminUserForm.controls.password.errors?.['required']">This field is mandatory</span>
+              <span *ngIf="adminUserForm.controls.password.errors?.['minlength']">Password must be at least 8 characters</span>
+            </mat-error>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="form-field-group">
+            <mat-label class="field-label">
+              <mat-icon class="label-icon">lock_outline</mat-icon>
+              Confirm Password
+            </mat-label>
+            <mat-form-field appearance="outline" class="custom-form-field">
+              <input
+                matInput
+                [type]="hideConfirmPassword ? 'password' : 'text'"
+                formControlName="confirmPassword"
+                placeholder="Re-enter password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="togglePasswordVisibility('confirmPassword')"
+                [attr.aria-label]="'Hide confirm password'"
+                [attr.aria-pressed]="hideConfirmPassword"
+                class="password-toggle-button"
+              >
+                <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-error *ngIf="adminUserForm.controls.confirmPassword.touched && adminUserForm.controls.confirmPassword.invalid" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span *ngIf="adminUserForm.controls.confirmPassword.errors?.['required']">This field is mandatory</span>
+              <span *ngIf="adminUserForm.controls.confirmPassword.errors?.['passwordMismatch']">Passwords do not match</span>
+            </mat-error>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-actions">
+            <button type="button" mat-raised-button (click)="onSubmit()" color="primary" class="submit-button" [disabled]="adminUserForm.invalid">
+              <mat-icon class="button-icon">person_add</mat-icon>
+              <span>Create Admin User</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- View Admin Users Table -->
+      <div *ngIf="viewMode === 'view'" class="view-content">
+        <!-- Search Bar -->
+        <div class="search-container">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-icon matPrefix class="search-icon">search</mat-icon>
+            <input
+              matInput
+              placeholder="Search admin users by username, email, organization, role, or created by"
+              (input)="applyFilter($event)"
+              [value]="searchFilter"
+            />
+          </mat-form-field>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="dataSource" matSort class="admin-user-table sticky-header-table">
+            <!-- Organization Column -->
+            <ng-container matColumnDef="organization">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">business</mat-icon>
+                  <span>Organization</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="organization-cell">
+                <div class="cell-content">
+                  <mat-icon class="cell-icon">domain</mat-icon>
+                  <span class="cell-text">{{ element.organizationName || 'N/A' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Username Column -->
+            <ng-container matColumnDef="username">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">person</mat-icon>
+                  <span>Username</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="username-cell">
+                <div class="cell-content">
+                  <mat-icon class="cell-icon">account_circle</mat-icon>
+                  <span class="cell-text">{{ element.username }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">email</mat-icon>
+                  <span>Email</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="email-cell">
+                <div class="cell-content">
+                  <mat-icon class="cell-icon">mail_outline</mat-icon>
+                  <span class="cell-text">{{ element.email }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Role Column -->
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">admin_panel_settings</mat-icon>
+                  <span>Role</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="role-cell">
+                <span class="role-badge" [class]="element.role?.toLowerCase() || 'default'">
+                  {{ element.role === 'ORG_ADMIN' ? 'Admin' : element.role === 'SUPER_ADMIN' ? 'Super Admin' : (element.role || 'N/A') }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Created By Column -->
+            <ng-container matColumnDef="createdBy">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">person_pin</mat-icon>
+                  <span>Created By</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="created-by-cell">
+                <div class="cell-content">
+                  <mat-icon class="cell-icon">account_circle</mat-icon>
+                  <span class="cell-text">{{ element.createdBy || 'N/A' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Created At Column -->
+            <ng-container matColumnDef="creationDateTime">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">calendar_today</mat-icon>
+                  <span>Created At</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="created-at-cell">
+                <span class="cell-text">{{ element.creationDateTime ? (element.creationDateTime | date: 'medium') : 'N/A' }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Action Column -->
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">settings</mat-icon>
+                  <span>Action</span>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="action-cell">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="View Details"
+                  class="action-button"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header-row"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+
+            <!-- No data row -->
+            <tr class="no-data-row" *matNoDataRow>
+              <td class="no-data-cell" [attr.colspan]="displayedColumns.length">
+                <div class="no-data-content">
+                  <mat-icon class="no-data-icon">admin_panel_settings</mat-icon>
+                  <p class="no-data-text">No admin users found</p>
+                  <p class="no-data-subtext" *ngIf="searchFilter">Try adjusting your search criteria</p>
+                  <p class="no-data-subtext" *ngIf="!searchFilter">Create your first admin user to get started</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Paginator -->
+        <div class="paginator-container">
+          <mat-paginator
+            #paginator
+            [pageSizeOptions]="[10, 20, 50, 100]"
+            [pageSize]="10"
+            showFirstLastButtons
+            class="custom-paginator"
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ngx-spinner name="mainSpinner" bdColor="rgba(0,0,0,0.8)" size="large" color="#ff6b6b" type="ball-scale-multiple" [fullScreen]="true">
+  <p style="color: white">Loading...</p>
+</ngx-spinner>

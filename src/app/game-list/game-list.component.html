@@ -33,6 +33,22 @@
             </td>
           </ng-container>
 
+          <!-- Organization Name Column -->
+          <ng-container matColumnDef="orgName">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <div class="header-cell-content">
+                <mat-icon class="header-icon">business</mat-icon>
+                <span>Organization</span>
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let element" class="org-name-cell">
+              <div class="cell-content">
+                <mat-icon class="cell-icon">domain</mat-icon>
+                <span class="cell-text">{{ element.orgName || '- -' }}</span>
+              </div>
+            </td>
+          </ng-container>
+
           <!-- User Name Column -->
           <ng-container matColumnDef="userName">
             <th mat-header-cell mat-sort-header *matHeaderCellDef>
@@ -45,6 +61,22 @@
               <div class="cell-content">
                 <mat-icon class="cell-icon">account_circle</mat-icon>
                 <span class="cell-text">{{ element.userName }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Admin Email Column -->
+          <ng-container matColumnDef="adminEmail">
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+              <div class="header-cell-content">
+                <mat-icon class="header-icon">email</mat-icon>
+                <span>Admin Email</span>
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let element" class="admin-email-cell">
+              <div class="cell-content">
+                <mat-icon class="cell-icon">mail_outline</mat-icon>
+                <span class="cell-text">{{ element.adminEmail || '- -' }}</span>
               </div>
             </td>
           </ng-container>
@@ -93,18 +125,23 @@
             </td>
           </ng-container>
 
-          <!-- Password Column -->
-          <ng-container matColumnDef="password">
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
             <th mat-header-cell mat-sort-header *matHeaderCellDef>
               <div class="header-cell-content">
-                <mat-icon class="header-icon">lock</mat-icon>
-                <span>Password</span>
+                <mat-icon class="header-icon">toggle_on</mat-icon>
+                <span>Status</span>
               </div>
             </th>
-            <td mat-cell *matCellDef="let element" class="password-cell">
-              <div class="password-content">
-                <span class="password-text">{{ element.password }}</span>
-              </div>
+            <td mat-cell *matCellDef="let element" class="status-cell">
+              <span 
+                class="status-badge"
+                [class.active]="element.status"
+                [class.inactive]="!element.status"
+              >
+                <mat-icon class="status-icon">{{ element.status ? 'check_circle' : 'cancel' }}</mat-icon>
+                <span class="status-text">{{ element.status ? 'Active' : 'Inactive' }}</span>
+              </span>
             </td>
           </ng-container>
 
@@ -158,6 +195,16 @@
             </div>
 
             <div class="card-row">
+              <span class="label">Organization</span>
+              <span class="value">{{ element.orgName || '- -' }}</span>
+            </div>
+
+            <div class="card-row">
+              <span class="label">Admin Email</span>
+              <span class="value">{{ element.adminEmail || '- -' }}</span>
+            </div>
+
+            <div class="card-row">
               <span class="label">Game URL</span>
               <a
                 [href]="element.gameUrl"
@@ -181,8 +228,15 @@
             </div>
 
             <div class="card-row">
-              <span class="label">Password</span>
-              <span class="value password">{{ element.password }}</span>
+              <span class="label">Status</span>
+              <span 
+                class="status-badge value"
+                [class.active]="element.status"
+                [class.inactive]="!element.status"
+              >
+                <mat-icon class="status-icon">{{ element.status ? 'check_circle' : 'cancel' }}</mat-icon>
+                <span>{{ element.status ? 'Active' : 'Inactive' }}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -212,3 +266,8 @@
     </div>
   </div>
 </div>
+
+<ngx-spinner name="mainSpinner" bdColor="rgba(0,0,0,0.8)" size="large" color="#4facfe" type="ball-scale-multiple" [fullScreen]="true">
+  <p style="color: white">Loading...</p>
+</ngx-spinner>
+

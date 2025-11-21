@@ -1,0 +1,151 @@
+<div class="edit-modal-container">
+  <div class="modal-header">
+    <div class="icon-container">
+      <div class="icon-circle">
+        <mat-icon class="header-icon">edit</mat-icon>
+      </div>
+    </div>
+    <h2 class="modal-title">Edit Admin User</h2>
+    <p class="modal-subtitle">Update admin user details and credentials</p>
+  </div>
+  
+  <form [formGroup]="adminUserForm" class="modal-form">
+    <div class="form-container">
+      <!-- Email Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">email</mat-icon>
+          Email
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="Enter email address"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="adminUserForm.controls.email.touched && adminUserForm.controls.email.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="adminUserForm.controls.email.errors?.['required']">This field is mandatory</span>
+          <span *ngIf="adminUserForm.controls.email.errors?.['email']">Please enter a valid email address</span>
+        </mat-error>
+      </div>
+
+      <!-- Role Selection Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">admin_panel_settings</mat-icon>
+          Role
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <mat-select 
+            formControlName="role" 
+            placeholder="Select Role"
+          >
+            <mat-option 
+              *ngFor="let role of roles" 
+              [value]="role.value"
+            >
+              {{ role.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="adminUserForm.controls.role.touched && adminUserForm.controls.role.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="adminUserForm.controls.role.errors?.['required']">Please select a role</span>
+        </mat-error>
+      </div>
+
+      <!-- Organization Selection Field -->
+      <div class="form-field-group" *ngIf="adminUserForm.get('role')?.value === 'ORG_ADMIN'">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">business</mat-icon>
+          Organization
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <mat-select 
+            formControlName="organizationId" 
+            placeholder="Select an organization"
+            [disabled]="loadingOrganizations"
+          >
+            <mat-option *ngIf="loadingOrganizations" disabled>
+              <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+              Loading organizations...
+            </mat-option>
+            <mat-option 
+              *ngFor="let org of organizationsList" 
+              [value]="org.id"
+            >
+              <div class="org-option">
+                <mat-icon class="org-option-icon">domain</mat-icon>
+                <span>{{ org.name }}</span>
+              </div>
+            </mat-option>
+            <mat-option *ngIf="!loadingOrganizations && organizationsList.length === 0" disabled>
+              No organizations available
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="adminUserForm.controls.organizationId.touched && adminUserForm.controls.organizationId.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="adminUserForm.controls.organizationId.errors?.['required']">Please select an organization</span>
+        </mat-error>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">lock</mat-icon>
+          Password
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter new password (leave blank to keep current)"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+            class="password-toggle-button"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <div class="field-hint">Leave blank to keep the current password</div>
+        <mat-error *ngIf="adminUserForm.controls.password.touched && adminUserForm.controls.password.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="adminUserForm.controls.password.errors?.['minlength']">Password must be at least 8 characters</span>
+        </mat-error>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button 
+        type="button"
+        mat-flat-button 
+        mat-dialog-close 
+        class="cancel-button"
+      >
+        <span>Cancel</span>
+      </button>
+      <button 
+        type="button"
+        mat-flat-button 
+        (click)="onSubmit()" 
+        class="update-button"
+        [disabled]="adminUserForm.invalid"
+      >
+        <mat-icon class="button-icon">save</mat-icon>
+        <span>Update</span>
+      </button>
+    </div>
+  </form>
+</div>
+

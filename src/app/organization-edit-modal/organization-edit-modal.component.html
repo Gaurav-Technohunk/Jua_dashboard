@@ -1,0 +1,161 @@
+<div class="edit-modal-container">
+  <div class="modal-header">
+    <div class="icon-container">
+      <div class="icon-circle">
+        <mat-icon class="header-icon">edit</mat-icon>
+      </div>
+    </div>
+    <h2 class="modal-title">Edit Organization</h2>
+    <p class="modal-subtitle">Update organization details and credentials</p>
+  </div>
+  
+  <form [formGroup]="organizationForm" class="modal-form">
+    <div class="form-container">
+      <!-- Organization Name Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">business</mat-icon>
+          <span>Organization Name</span>
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="name"
+            placeholder="Enter organization name"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="organizationForm.controls.name.touched && organizationForm.controls.name.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="organizationForm.controls.name.errors?.['required']">This field is mandatory</span>
+          <span *ngIf="organizationForm.controls.name.errors?.['minlength']">Organization name must be at least 3 characters</span>
+        </mat-error>
+      </div>
+
+      <!-- Username Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">person</mat-icon>
+          <span>Admin Username</span>
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="username"
+            placeholder="Enter admin username"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="organizationForm.controls.username.touched && organizationForm.controls.username.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="organizationForm.controls.username.errors?.['required']">This field is mandatory</span>
+          <span *ngIf="organizationForm.controls.username.errors?.['minlength']">Username must be at least 3 characters</span>
+        </mat-error>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">lock</mat-icon>
+          <span>Password</span>
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter new password (leave blank to keep current)"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility('password')"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+            class="password-toggle-button"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-error *ngIf="organizationForm.controls.password.touched && organizationForm.controls.password.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="organizationForm.controls.password.errors?.['minlength']">Password must be at least 6 characters</span>
+        </mat-error>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">lock_outline</mat-icon>
+          <span>Confirm Password</span>
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            placeholder="Re-enter new password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility('confirmPassword')"
+            [attr.aria-label]="'Hide confirm password'"
+            [attr.aria-pressed]="hideConfirmPassword"
+            class="password-toggle-button"
+          >
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-error *ngIf="organizationForm.controls.confirmPassword.touched && organizationForm.controls.confirmPassword.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="organizationForm.controls.confirmPassword.errors?.['required']">This field is mandatory when changing password</span>
+          <span *ngIf="organizationForm.controls.confirmPassword.errors?.['passwordMismatch']">Passwords do not match</span>
+        </mat-error>
+      </div>
+
+      <!-- Active Status Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">toggle_on</mat-icon>
+          <span>Status</span>
+        </mat-label>
+        <div class="toggle-container">
+          <mat-slide-toggle 
+            formControlName="active" 
+            color="primary"
+            class="status-toggle"
+          >
+            <span class="toggle-label">
+              {{ organizationForm.get('active')?.value ? 'Active' : 'Inactive' }}
+            </span>
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button 
+        type="button"
+        mat-flat-button 
+        mat-dialog-close 
+        class="cancel-button"
+      >
+        <span>Cancel</span>
+      </button>
+      <button 
+        type="button"
+        mat-flat-button 
+        (click)="onSubmit()" 
+        class="update-button"
+        [disabled]="organizationForm.invalid"
+      >
+        <mat-icon class="button-icon">save</mat-icon>
+        <span>Update</span>
+      </button>
+    </div>
+  </form>
+</div>
+

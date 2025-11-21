@@ -10,6 +10,8 @@ import { HistoryComponent } from './history/history.component';
 import { GameListComponent } from './game-list/game-list.component';
 import { PlayerRegistrationComponent } from './player-registration/player-registration.component';
 import { PlayerListComponent } from './player-list/player-list.component';
+import { OrganizationComponent } from './organization/organization.component';
+import { AdminUserComponent } from './admin-user/admin-user.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -56,6 +58,16 @@ const routes: Routes = [
       {
         path: 'player-list',
         component: PlayerListComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'organization',
+        component: OrganizationComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'admin-user',
+        component: AdminUserComponent,
         canActivate: [AuthGuard],
       }
     ],

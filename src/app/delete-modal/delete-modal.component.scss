@@ -39,7 +39,7 @@
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,7 +51,7 @@
         position: absolute;
         inset: -2px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%);
         opacity: 0.2;
         filter: blur(12px);
         z-index: -1;
@@ -108,7 +108,7 @@
       font-size: 24px;
       width: 24px;
       height: 24px;
-      color: #f5576c;
+      color: var(--accent-danger-end);
       flex-shrink: 0;
       margin-top: 2px;
     }
@@ -132,7 +132,7 @@
   margin: 0;
   border-top: 1px solid #f1f3f5;
   flex-shrink: 0;
-  background: #fafbfc;
+  background: var(--surface-soft);
   
   button {
     min-width: 130px;
@@ -161,21 +161,21 @@
   }
   
   .cancel-button {
-    background: white !important;
-    background-color: white !important;
+    background: var(--surface-card) !important;
+    background-color: var(--surface-card) !important;
     color: #6c757d !important;
-    border: 1px solid #e9ecef !important;
+    border: 1px solid var(--border-strong) !important;
     
     &:not([disabled]):hover {
-      background: #f8f9fa !important;
-      background-color: #f8f9fa !important;
+      background: var(--surface-muted) !important;
+      background-color: var(--surface-muted) !important;
       color: #495057 !important;
       border-color: #dee2e6 !important;
     }
   }
   
   .logout-button {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%) !important;
     background-color: transparent !important;
     color: white !important;
     box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3) !important;
@@ -183,7 +183,7 @@
     &:not([disabled]):hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4) !important;
-      background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+      background: linear-gradient(135deg, var(--accent-danger-end) 0%, var(--accent-danger-start) 100%) !important;
       background-color: transparent !important;
     }
     
@@ -340,3 +340,5 @@
     font-size: 13px;
   }
 }
+
+

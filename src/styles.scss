@@ -1,11 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-/* Modern Design System Variables */
+@include mat.core();
+
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$blue-palette,
+    tertiary: mat.$magenta-palette,
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$blue-palette,
+    tertiary: mat.$magenta-palette,
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
 :root {
-  --primary-color: #667eea;
+  color-scheme: light;
+  @include mat.all-component-themes($light-theme);
+
+  --brand-primary: #667eea;
+  --brand-secondary: #764ba2;
+  --brand-gradient: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  --brand-gradient-alt: linear-gradient(135deg, var(--brand-secondary) 0%, var(--brand-primary) 100%);
+
+  --accent-info-start: #4facfe;
+  --accent-info-end: #00f2fe;
+  --accent-danger-start: #f093fb;
+  --accent-danger-end: #f5576c;
+  --accent-soft-start: #a8edea;
+  --accent-soft-end: #fed6e3;
+
+  --primary-color: var(--brand-primary);
   --primary-dark: #5568d3;
   --primary-light: #818cf8;
-  --secondary-color: #764ba2;
+  --secondary-color: var(--brand-secondary);
   --accent-color: #ec4899;
   --success-color: #10b981;
   --error-color: #e53e3e;
@@ -16,6 +54,11 @@
   --bg-secondary: #f7fafc;
   --bg-tertiary: #edf2f7;
   --bg-dark: #1a202c;
+  --surface-card: #ffffff;
+  --surface-muted: #f8f9fa;
+  --surface-soft: #f5f7fb;
+  --surface-neutral: #f1f3f5;
+  --surface-modal: #ffffff;
   
   --text-primary: #1a202c;
   --text-secondary: #4a5568;
@@ -23,14 +66,15 @@
   --text-light: #ffffff;
   
   --border-color: #e2e8f0;
+  --border-strong: #d0d7e6;
   --border-radius: 12px;
   --border-radius-sm: 8px;
   --border-radius-lg: 16px;
   
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 20px rgba(15, 23, 42, 0.12), 0 6px 10px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 24px 35px rgba(15, 23, 42, 0.15), 0 12px 18px rgba(15, 23, 42, 0.08);
   
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -40,6 +84,46 @@
   --spacing-2xl: 3rem;
   
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  @include mat.all-component-colors($dark-theme);
+
+  --brand-primary: #8b9bff;
+  --brand-secondary: #a855f7;
+  --brand-gradient: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  --brand-gradient-alt: linear-gradient(135deg, var(--brand-secondary) 0%, var(--brand-primary) 100%);
+
+  --accent-info-start: #38bdf8;
+  --accent-info-end: #22d3ee;
+  --accent-danger-start: #f472b6;
+  --accent-danger-end: #fb7185;
+  --accent-soft-start: #5eead4;
+  --accent-soft-end: #c084fc;
+
+  --bg-primary: #111827;
+  --bg-secondary: #0f172a;
+  --bg-tertiary: #1f2937;
+  --bg-dark: #0b1120;
+  --surface-card: #1f2435;
+  --surface-muted: #141a2b;
+  --surface-soft: #182033;
+  --surface-neutral: #242b3f;
+  --surface-modal: #1a2031;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #c7d2fe;
+  --text-tertiary: #94a3b8;
+  --text-light: #ffffff;
+
+  --border-color: rgba(148, 163, 184, 0.45);
+  --border-strong: rgba(148, 163, 184, 0.7);
+
+  --shadow-sm: 0 1px 3px rgba(2, 6, 23, 0.65), 0 1px 2px rgba(2, 6, 23, 0.45);
+  --shadow-md: 0 12px 24px rgba(2, 6, 23, 0.6), 0 6px 10px rgba(2, 6, 23, 0.4);
+  --shadow-lg: 0 20px 40px rgba(2, 6, 23, 0.65), 0 12px 20px rgba(2, 6, 23, 0.5);
+  --shadow-xl: 0 30px 60px rgba(2, 6, 23, 0.7), 0 20px 30px rgba(2, 6, 23, 0.55);
 }
 
 html,
@@ -81,6 +165,11 @@ body {
   flex-direction: column !important;
   overflow: hidden !important;
   position: relative !important;
+  background: var(--surface-modal) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--border-radius-lg) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-xl) !important;
 }
 
 /* Edit Game Dialog */
@@ -104,7 +193,7 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(90deg, var(--accent-info-start) 0%, var(--accent-info-end) 100%);
   z-index: 1;
 }
 
@@ -129,7 +218,7 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(90deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%);
   z-index: 1;
 }
 
@@ -252,8 +341,8 @@ mat-dialog-actions {
 /* Cancel Button Styles */
 .edit-game-dialog .cancel-button.mat-flat-button,
 .logout-dialog .cancel-button.mat-flat-button {
-  background: #f8f9fa !important;
-  background-color: #f8f9fa !important;
+  background: var(--surface-muted) !important;
+  background-color: var(--surface-muted) !important;
   color: #6c757d !important;
   border: 2px solid #e9ecef !important;
   
@@ -277,7 +366,7 @@ mat-dialog-actions {
 
 /* Update Button Styles (Edit Game Modal) */
 .edit-game-dialog .update-button.mat-flat-button {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  background: linear-gradient(135deg, var(--accent-info-start) 0%, var(--accent-info-end) 100%) !important;
   background-color: transparent !important;
   color: white !important;
   box-shadow: var(--shadow-md) !important;
@@ -285,13 +374,13 @@ mat-dialog-actions {
   &:not([disabled]):hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg) !important;
-    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
+    background: linear-gradient(135deg, var(--accent-info-end) 0%, var(--accent-info-start) 100%) !important;
     background-color: transparent !important;
   }
   
   &:not([disabled]):active {
     transform: translateY(0);
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    background: linear-gradient(135deg, var(--accent-info-start) 0%, var(--accent-info-end) 100%) !important;
     background-color: transparent !important;
   }
   
@@ -302,7 +391,7 @@ mat-dialog-actions {
 
 /* Logout Button Styles */
 .logout-dialog .logout-button.mat-flat-button {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%) !important;
   background-color: transparent !important;
   color: white !important;
   box-shadow: var(--shadow-md) !important;
@@ -310,13 +399,13 @@ mat-dialog-actions {
   &:not([disabled]):hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg) !important;
-    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
+    background: linear-gradient(135deg, var(--accent-danger-end) 0%, var(--accent-danger-start) 100%) !important;
     background-color: transparent !important;
   }
   
   &:not([disabled]):active {
     transform: translateY(0);
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%) !important;
     background-color: transparent !important;
   }
   
@@ -447,3 +536,6 @@ mat-dialog-actions {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+
+

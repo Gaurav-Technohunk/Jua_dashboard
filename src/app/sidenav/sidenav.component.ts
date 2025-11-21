@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
 import { RedeemService } from 'src/services/redeem.service';
+import { AuthService } from 'src/services/auth.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -11,13 +12,24 @@ import { RedeemService } from 'src/services/redeem.service';
 export class SidenavComponent implements OnInit {
 
   @Output() navigate = new EventEmitter<void>();
+  
+  // User role properties
+  userRole: string | null = null;
+  isSuperAdmin: boolean = false;
+  isOrgAdmin: boolean = false;
 
   constructor(
     private dialog: MatDialog,
-    private redeemService: RedeemService
+    private redeemService: RedeemService,
+    private authService: AuthService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Get user role
+    this.userRole = this.authService.getUserRole();
+    this.isSuperAdmin = this.authService.isSuperAdmin();
+    this.isOrgAdmin = this.authService.isOrgAdmin();
+  }
 
   openDialog() {
     this.dialog.open(DeleteModalComponent, {

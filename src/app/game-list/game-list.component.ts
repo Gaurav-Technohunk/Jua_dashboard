@@ -19,12 +19,13 @@ export class GameListComponent implements OnInit, AfterViewInit, OnDestroy {
   private sortSubscription?: Subscription;
   displayedColumns: string[] = [
     'gameName',
+    'orgName',
     'userName',
+    'adminEmail',
     'gameUrl',
     'suffix',
     'prefix',
-    'password',
-    // 'status',
+    'status',
     'action',
   ];
 

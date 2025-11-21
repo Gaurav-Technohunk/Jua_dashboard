@@ -20,9 +20,12 @@ export interface settingForm {
   userName: string;
   password: string;
   prefix: string;
+  suffix: string;
   gameName: string;
   gameUrl: string;
   status: boolean;
+  orgName: string;
+  adminEmail: string;
 }
 
 export interface gameList {
@@ -34,4 +37,21 @@ export interface gameList {
   status: boolean;
   suffix: string;
   prefix: string;
+  orgName?: string;
+  adminEmail?: string;
+}
+
+export interface organizationForm {
+  name: string;
+  username: string;
+  password?: string; 
+  active: boolean;
+}
+
+export interface adminUserForm {
+  username: string;
+  password: string;
+  email: string;
+  role: string; // ORG_ADMIN or SUPER_ADMIN
+  orgId?: string; // Optional for SUPER_ADMIN
 }

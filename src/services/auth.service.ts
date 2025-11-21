@@ -40,4 +40,56 @@ export class AuthService {
       setTimeout(() => this.logout(), expiry);
     }
   }
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role || payload.roles || null;
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  getUserPayload(): any {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload;
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  isSuperAdmin(): boolean {
+    const role = this.getUserRole();
+    return role === 'SUPER_ADMIN';
+  }
+
+  isOrgAdmin(): boolean {
+    const role = this.getUserRole();
+    return role === 'ORG_ADMIN';
+  }
+
+  hasRole(role: string): boolean {
+    const userRole = this.getUserRole();
+    return userRole === role;
+  }
+
+  getUsername(): string | null {
+    const payload = this.getUserPayload();
+    if (payload) {
+      // Try different common fields for username in JWT
+      return payload.username || payload.sub || payload.preferred_username || payload.userName || null;
+    }
+    return null;
+  }
 }

@@ -11,49 +11,183 @@
   
   <form [formGroup]="settingForm" class="modal-form">
     <div class="form-container">
-      <div class="form-field-group" *ngFor="let item of labelName">
+      <!-- Organization Dropdown -->
+      <div class="form-field-group">
         <mat-label class="field-label">
-          <mat-icon class="label-icon">{{ getFieldIcon(item.field) }}</mat-icon>
-          <span>{{ item.name }}</span>
+          <mat-icon class="label-icon">business</mat-icon>
+          Organization
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <mat-select formControlName="orgName" placeholder="Select Organization">
+            <mat-option *ngFor="let org of organizations" [value]="org.name">
+              {{ org.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="settingForm.controls.orgName.touched && settingForm.controls.orgName.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.orgName.errors?.['required']">This field is mandatory</span>
+        </mat-error>
+      </div>
+
+      <!-- Game Name Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">sports_esports</mat-icon>
+          Game Name
         </mat-label>
         <mat-form-field appearance="outline" class="custom-form-field">
           <input
             matInput
-            [type]="item.field === 'password' ? 'password' : 'text'"
-            [formControlName]="item.field"
-            [placeholder]="item.placeholder"
+            type="text"
+            formControlName="gameName"
+            placeholder="Enter Game Name"
           />
         </mat-form-field>
-        <ng-container *ngIf="item.field === 'gameUrl'">
-          <mat-error *ngIf="settingForm.controls.gameUrl.touched && settingForm.controls.gameUrl.invalid" class="error-message">
-            <mat-icon class="error-icon">error</mat-icon>
-            <span *ngIf="settingForm.controls.gameUrl.errors?.['required']">This field is mandatory</span>
-          </mat-error>
-        </ng-container>
-        <ng-container *ngIf="item.field === 'prefix'">
-          <mat-error *ngIf="settingForm.controls.prefix.touched && settingForm.controls.prefix.invalid" class="error-message">
-            <mat-icon class="error-icon">error</mat-icon>
-            <span *ngIf="settingForm.controls.prefix.errors?.['required']">This field is mandatory</span>
-          </mat-error>
-        </ng-container>
-        <ng-container *ngIf="item.field === 'gameName'">
-          <mat-error *ngIf="settingForm.controls.gameName.touched && settingForm.controls.gameName.invalid" class="error-message">
-            <mat-icon class="error-icon">error</mat-icon>
-            <span *ngIf="settingForm.controls.gameName.errors?.['required']">This field is mandatory</span>
-          </mat-error>
-        </ng-container>
-        <ng-container *ngIf="item.field === 'userName'">
-          <mat-error *ngIf="settingForm.controls.userName.touched && settingForm.controls.userName.invalid" class="error-message">
-            <mat-icon class="error-icon">error</mat-icon>
-            <span *ngIf="settingForm.controls.userName.errors?.['required']">This field is mandatory</span>
-          </mat-error>
-        </ng-container>
-        <ng-container *ngIf="item.field === 'password'">
-          <mat-error *ngIf="settingForm.controls.password.touched && settingForm.controls.password.invalid" class="error-message">
-            <mat-icon class="error-icon">error</mat-icon>
-            <span *ngIf="settingForm.controls.password.errors?.['required']">This field is mandatory</span>
-          </mat-error>
-        </ng-container>
+        <mat-error *ngIf="settingForm.controls.gameName.touched && settingForm.controls.gameName.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.gameName.errors?.['required']">This field is mandatory</span>
+        </mat-error>
+      </div>
+
+      <!-- Customer Username Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">person</mat-icon>
+          Customer's Username
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="userName"
+            placeholder="Enter Username"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="settingForm.controls.userName.touched && settingForm.controls.userName.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.userName.errors?.['required']">This field is mandatory</span>
+        </mat-error>
+      </div>
+
+      <!-- Customer Password Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">lock</mat-icon>
+          Customer's Password
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter Password (leave empty to keep current)"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <div class="field-hint">Leave empty to keep the current password</div>
+      </div>
+
+      <!-- Game URL Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">link</mat-icon>
+          Game URL
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="url"
+            formControlName="gameUrl"
+            placeholder="Enter Game URL (e.g., https://juwa.com)"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="settingForm.controls.gameUrl.touched && settingForm.controls.gameUrl.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.gameUrl.errors?.['required']">This field is mandatory</span>
+          <span *ngIf="settingForm.controls.gameUrl.errors?.['pattern']">Please enter a valid URL (starting with http:// or https://)</span>
+        </mat-error>
+      </div>
+
+      <!-- Prefix Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">text_fields</mat-icon>
+          Prefix
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="prefix"
+            placeholder="Enter Prefix (e.g., jua_)"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="settingForm.controls.prefix.touched && settingForm.controls.prefix.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.prefix.errors?.['required']">This field is mandatory</span>
+        </mat-error>
+      </div>
+
+      <!-- Suffix Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">text_fields</mat-icon>
+          Suffix
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="suffix"
+            placeholder="Enter Suffix (e.g., jua)"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="settingForm.controls.suffix.touched && settingForm.controls.suffix.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.suffix.errors?.['required']">This field is mandatory</span>
+        </mat-error>
+      </div>
+
+      <!-- Admin Email Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">email</mat-icon>
+          Admin Email
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="email"
+            formControlName="adminEmail"
+            placeholder="Enter Admin Email"
+          />
+        </mat-form-field>
+        <mat-error *ngIf="settingForm.controls.adminEmail.touched && settingForm.controls.adminEmail.invalid" class="error-message">
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="settingForm.controls.adminEmail.errors?.['required']">This field is mandatory</span>
+          <span *ngIf="settingForm.controls.adminEmail.errors?.['email']">Please enter a valid email address</span>
+        </mat-error>
+      </div>
+
+      <!-- Status Toggle -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">toggle_on</mat-icon>
+          Status
+        </mat-label>
+        <mat-slide-toggle formControlName="status" color="primary" class="status-toggle">
+          {{ settingForm.get('status')?.value ? 'Active' : 'Inactive' }}
+        </mat-slide-toggle>
       </div>
     </div>
     

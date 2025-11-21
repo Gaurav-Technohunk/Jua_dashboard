@@ -117,7 +117,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: white;
+  background: var(--surface-card);
   position: relative;
   animation: rotate 2s linear infinite;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -130,7 +130,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
   animation: rotateReverse 1.5s linear infinite;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.5);
 }
@@ -247,7 +247,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: white;
+  background: var(--surface-card);
   display: inline-block;
   animation: dotBounce 1.4s ease-in-out infinite both;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -445,3 +445,5 @@
     width: 140px;
   }
 }
+
+

@@ -43,7 +43,7 @@
   animation: slideIn 0.5s ease-out;
   
   .header-content {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-xl);
@@ -111,7 +111,7 @@
   animation: slideIn 0.6s ease-out;
   
   .form-card {
-    background: white;
+    background: var(--surface-card);
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-xl);
@@ -138,7 +138,7 @@
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #f5576c;
+      color: var(--accent-danger-end);
     }
   }
   
@@ -157,19 +157,19 @@
       }
       
       .mat-form-field-outline {
-        background: #f8f9fa;
+        background: var(--surface-muted);
         border-radius: var(--border-radius);
         border: 2px solid #e9ecef;
         transition: var(--transition);
       }
       
       .mat-form-field-outline-thick {
-        border-color: #f5576c;
+        border-color: var(--accent-danger-end);
         border-width: 2px;
       }
       
       .mat-form-field-prefix {
-        color: #f5576c;
+        color: var(--accent-danger-end);
         margin-right: var(--spacing-sm);
       }
       
@@ -178,16 +178,16 @@
       }
       
       .mat-form-field-label.mat-focused {
-        color: #f5576c;
+        color: var(--accent-danger-end);
       }
       
       .mat-select-arrow {
-        color: #f5576c;
+        color: var(--accent-danger-end);
       }
     }
     
     .input-icon {
-      color: #f5576c;
+      color: var(--accent-danger-end);
     }
   }
   
@@ -247,7 +247,7 @@
     font-weight: 600;
     font-size: 16px;
     border-radius: var(--border-radius);
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%);
     color: white;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
@@ -265,7 +265,7 @@
     &:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
-      background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+      background: linear-gradient(135deg, var(--accent-danger-end) 0%, var(--accent-danger-start) 100%);
     }
     
     &:active {
@@ -346,3 +346,5 @@
     }
   }
 }
+
+

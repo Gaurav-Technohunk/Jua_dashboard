@@ -38,6 +38,12 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { PlayerRegistrationComponent } from './player-registration/player-registration.component';
 import { PlayerListComponent } from './player-list/player-list.component';
+import { OrganizationComponent } from './organization/organization.component';
+import { OrganizationEditModalComponent } from './organization-edit-modal/organization-edit-modal.component';
+import { OrganizationDeleteModalComponent } from './organization-delete-modal/organization-delete-modal.component';
+import { AdminUserComponent } from './admin-user/admin-user.component';
+import { AdminUserEditModalComponent } from './admin-user-edit-modal/admin-user-edit-modal.component';
+import { AdminUserDeleteModalComponent } from './admin-user-delete-modal/admin-user-delete-modal.component';
 
 const modules = [
   MatSidenavModule,
@@ -76,6 +82,12 @@ const modules = [
     GameEditModalComponent,
     PlayerRegistrationComponent,
     PlayerListComponent,
+    OrganizationComponent,
+    OrganizationEditModalComponent,
+    OrganizationDeleteModalComponent,
+    AdminUserComponent,
+    AdminUserEditModalComponent,
+    AdminUserDeleteModalComponent,
   ],
   imports: [
     BrowserModule,

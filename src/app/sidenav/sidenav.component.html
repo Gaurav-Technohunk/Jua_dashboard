@@ -31,6 +31,7 @@
         </span>
       </a> -->
       <a
+        *ngIf="isSuperAdmin"
         class="mat-list-item mb-2"
         mat-list-item
         routerLink="setting"
@@ -40,6 +41,7 @@
         <span> <mat-icon class="mat-icon">settings</mat-icon> Settings </span>
       </a>
       <a
+        *ngIf="isSuperAdmin"
         class="mat-list-item mb-2"
         mat-list-item
         routerLink="game-list"
@@ -79,6 +81,32 @@
         <mat-icon class="mat-icon">person</mat-icon> Player's List
       </span>
     </a>
+      <!-- Super Admin Only: Organization Management -->
+      <a
+        *ngIf="isSuperAdmin"
+        class="mat-list-item mb-2"
+        mat-list-item
+        routerLink="organization"
+        routerLinkActive="list-item-active"
+        (click)="onNavClick()"
+      >
+        <span>
+          <mat-icon class="mat-icon">business</mat-icon> Organization 
+        </span>
+      </a>
+      <!-- Super Admin Only: Create Admin User -->
+      <a
+        *ngIf="isSuperAdmin"
+        class="mat-list-item mb-2"
+        mat-list-item
+        routerLink="admin-user"
+        routerLinkActive="list-item-active"
+        (click)="onNavClick()"
+      >
+        <span>
+          <mat-icon class="mat-icon">admin_panel_settings</mat-icon> Create Admin User 
+        </span>
+      </a>
       <a
         class="mat-list-item mb-2"
         mat-list-item
