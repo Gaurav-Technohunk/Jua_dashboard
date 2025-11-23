@@ -4,6 +4,7 @@ import { RedeemService } from '../../services/redeem.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { creditLoad } from '../../services/interface';
 import { SnackbarService } from 'src/services/snackbar.service';
+import { AuthService } from 'src/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,11 +28,17 @@ export class DashboardComponent implements OnInit {
       type: 'number',
     },
   ];
+  organizationsList: any[] = [];
+  currentUserEmail: string | null = null;
+  currentUserOrgId: string | null = null;
+  currentUserOrgName: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private redeemService: RedeemService,
     private snackbarService: SnackbarService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -41,12 +48,285 @@ export class DashboardComponent implements OnInit {
       selectGameName: ['', Validators.required],
     });
 
-    this.getGameName();
+    // Load user info first, then fetch games
+    this.loadCurrentUserInfo();
+  }
+
+  loadCurrentUserInfo(): void {
+    // Get admin email from JWT token
+    this.currentUserEmail = this.authService.getUserEmail();
+    
+    // Get orgId from JWT token
+    this.currentUserOrgId = this.authService.getOrgId();
+    
+    // If email not in token, try to get username and fetch admin user details
+    if (!this.currentUserEmail || !this.currentUserOrgId) {
+      const username = this.authService.getUsername();
+      if (username) {
+        console.warn('Email or orgId not found in token. Username:', username);
+        // Fetch admin user details to get email and orgId if not in token
+        this.fetchAdminUserEmail(username);
+      } else {
+        // If we can't get username, try fetching games directly
+        this.initializeGames();
+      }
+    } else {
+      // If we have orgId, fetch organizations and games
+      this.fetchOrganizations();
+      this.initializeGames();
+    }
+  }
+  
+  initializeGames(): void {
+    // For admin users, always fetch from game list directly
+    if (this.authService.isOrgAdmin() || this.authService.isSuperAdmin()) {
+      // If orgId is available, fetch immediately
+      if (this.currentUserOrgId || this.currentUserOrgName) {
+        this.fetchGamesFromGameList();
+      } else {
+        // Wait a bit for orgId to load, then fetch
+        setTimeout(() => {
+          this.fetchGamesFromGameList();
+        }, 800);
+      }
+    } else {
+      // For other users, use regular endpoint
+      this.getGameName();
+    }
+  }
+
+  fetchAdminUserEmail(username: string): void {
+    // Fetch admin user details to get email and orgId if not in token
+    this.redeemService.getAdminUsers().subscribe({
+      next: (response: any) => {
+        let adminUsers: any[] = [];
+        
+        if (Array.isArray(response)) {
+          adminUsers = response;
+        } else if (response && Array.isArray(response.data)) {
+          adminUsers = response.data;
+        }
+        
+        const currentUser = adminUsers.find((admin: any) => admin.username === username);
+        if (currentUser) {
+          if (currentUser.email && !this.currentUserEmail) {
+            this.currentUserEmail = currentUser.email;
+          }
+          if ((currentUser.orgId || currentUser.organizationId) && !this.currentUserOrgId) {
+            this.currentUserOrgId = currentUser.orgId || currentUser.organizationId;
+            // Now fetch organizations and games
+            this.fetchOrganizations();
+          }
+        }
+        
+        // Initialize games after user info is loaded
+        this.initializeGames();
+      },
+      error: (error) => {
+        console.error('Error fetching admin user email:', error);
+        // Still try to fetch games even if user info fetch fails
+        this.initializeGames();
+      }
+    });
+  }
+
+  fetchOrganizations(): void {
+    // Only fetch if we have orgId to get orgName
+    if (this.currentUserOrgId) {
+      this.redeemService.getOrganizations().subscribe({
+        next: (response: any) => {
+          let organizations: any[] = [];
+          
+          if (Array.isArray(response)) {
+            organizations = response;
+          } else if (response && Array.isArray(response.data)) {
+            organizations = response.data;
+          } else if (response && Array.isArray(response.organizations)) {
+            organizations = response.organizations;
+          }
+          
+          // Find the current user's organization
+          const userOrg = organizations.find((org: any) => 
+            org.id === this.currentUserOrgId
+          );
+          
+          if (userOrg) {
+            this.currentUserOrgName = userOrg.name || null;
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching organizations:', error);
+        }
+      });
+    }
   }
 
   getGameName() {
-    this.redeemService.getGameName().subscribe((response: any) => {
-      this.gameList = response;
+    // For admin users (both Org Admin and Super Admin), always fetch from game list
+    if (this.authService.isOrgAdmin() || this.authService.isSuperAdmin()) {
+      this.fetchGamesFromGameList();
+      return;
+    }
+    
+    // For other users, use the regular endpoint
+    this.redeemService.getGameName().subscribe({
+      next: (response: any) => {
+        console.log('Game names response:', response);
+        
+        // Handle different response structures
+        if (Array.isArray(response)) {
+          this.gameList = response;
+        } else if (response && Array.isArray(response.data)) {
+          this.gameList = response.data;
+        } else if (response && Array.isArray(response.games)) {
+          this.gameList = response.games;
+        } else if (response && typeof response === 'object') {
+          // Try to extract game names from object
+          const gameNames = Object.values(response).filter((item: any) => 
+            typeof item === 'string' || (item && typeof item === 'object' && item.gameName)
+          );
+          if (gameNames.length > 0) {
+            this.gameList = gameNames.map((item: any) => 
+              typeof item === 'string' ? item : item.gameName
+            );
+          } else {
+            this.gameList = [];
+            console.warn('Could not parse game names from response:', response);
+          }
+        } else {
+          this.gameList = [];
+          console.warn('Unexpected response format:', response);
+        }
+        
+        // If still no games, try game list as fallback
+        if (this.gameList.length === 0) {
+          this.fetchGamesFromGameList();
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching game names:', error);
+        // Always fallback to game list on error
+        this.fetchGamesFromGameList();
+      }
+    });
+  }
+
+  fetchGamesFromGameList(): void {
+    // Fetch games from game list filtered by organization
+    this.redeemService.fetchGameList().subscribe({
+      next: (response: any) => {
+        console.log('Game list response:', response);
+        let games: any[] = [];
+        
+        if (Array.isArray(response)) {
+          games = response;
+        } else if (response && Array.isArray(response.data)) {
+          games = response.data;
+        }
+        
+        console.log('Total games fetched:', games.length);
+        
+        // Filter only active games first
+        games = games.filter((game: any) => game.status !== false);
+        console.log('Active games:', games.length);
+        
+        // Store original games before filtering (for fallback)
+        const originalGames = [...games];
+        
+        // Filter games by organization if org admin
+        if (this.authService.isOrgAdmin()) {
+          console.log('User is Org Admin. orgId:', this.currentUserOrgId, 'orgName:', this.currentUserOrgName);
+          console.log('All games before org filter:', games.map(g => ({ gameName: g.gameName, orgId: g.orgId, orgName: g.orgName })));
+          
+          // Try to filter by organization - check both orgId and orgName
+          if (this.currentUserOrgId || this.currentUserOrgName) {
+            const filteredGames = games.filter((game: any) => {
+              // Match by orgId if available
+              const matchesOrgId = this.currentUserOrgId && (
+                game.orgId === this.currentUserOrgId || 
+                game.organizationId === this.currentUserOrgId
+              );
+              
+              // Match by orgName if available (case-insensitive, flexible matching)
+              let matchesOrgName = false;
+              if (this.currentUserOrgName && game.orgName) {
+                const userOrgName = this.currentUserOrgName.trim().toLowerCase();
+                const gameOrgName = game.orgName.trim().toLowerCase();
+                matchesOrgName = userOrgName === gameOrgName || 
+                                 userOrgName.includes(gameOrgName) || 
+                                 gameOrgName.includes(userOrgName);
+              }
+              
+              return matchesOrgId || matchesOrgName;
+            });
+            
+            console.log('Games after org filter:', filteredGames.length);
+            console.log('Filtered games:', filteredGames.map(g => ({ gameName: g.gameName, orgId: g.orgId, orgName: g.orgName })));
+            
+            // If filtering resulted in empty list, show all active games as fallback
+            if (filteredGames.length === 0) {
+              console.warn('Organization filter resulted in 0 games. Showing all active games as fallback.');
+              games = originalGames; // Show all active games
+            } else {
+              games = filteredGames;
+            }
+          } else {
+            // If no org info available yet, show all active games
+            console.log('No org info available yet, showing all active games');
+          }
+        }
+        // Super admin sees all active games (no filtering needed)
+        
+        // Extract unique game names and sort them
+        const uniqueGameNames = [...new Set(games.map((game: any) => game.gameName).filter(Boolean))];
+        
+        // Clear and set gameList to ensure Angular detects the change
+        this.gameList = [];
+        this.gameList = uniqueGameNames.sort();
+        
+        console.log('Final game list for dropdown:', this.gameList);
+        console.log('Number of unique game names:', this.gameList.length);
+        console.log('Game names array:', JSON.stringify(this.gameList));
+        
+        // If still no games found, show helpful message
+        if (this.gameList.length === 0) {
+          console.warn('No games found after all processing');
+          
+          // If org admin and we have org info but no games, show specific message
+          if (this.authService.isOrgAdmin() && (this.currentUserOrgId || this.currentUserOrgName)) {
+            this.snackbarService.openSnackbar(
+              `No games available for organization: ${this.currentUserOrgName || 'your organization'}`,
+              'failed'
+            );
+          } else if (this.authService.isOrgAdmin() && !this.currentUserOrgId && !this.currentUserOrgName) {
+            // If org admin but no org info yet, wait and retry
+            setTimeout(() => {
+              if (this.currentUserOrgId || this.currentUserOrgName) {
+                this.fetchGamesFromGameList();
+              }
+            }, 1500);
+          } else {
+            this.snackbarService.openSnackbar(
+              'No games available.',
+              'failed'
+            );
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching games from game list:', error);
+        this.gameList = [];
+        
+        // Show detailed error message
+        let errorMessage = 'Failed to load games.';
+        if (error.status === 401) {
+          errorMessage = 'You are not authorized to view games. Please log in again.';
+        } else if (error.status === 403) {
+          errorMessage = 'You do not have permission to view games.';
+        }
+        
+        this.snackbarService.openSnackbar(errorMessage, 'failed');
+      }
     });
   }
 
@@ -113,6 +393,22 @@ export class DashboardComponent implements OnInit {
       username: formData.userName.trim(),
       coin: formData.amount.trim(),
     };
+    
+    // Add essential fields from current logged-in user
+    if (this.currentUserEmail) {
+      userData.adminEmail = this.currentUserEmail;
+    }
+    
+    if (this.currentUserOrgId) {
+      userData.orgId = this.currentUserOrgId;
+    }
+    
+    if (this.currentUserOrgName) {
+      userData.orgName = this.currentUserOrgName;
+    }
+    
+    // Debug: Log the payload being sent
+    console.log('Recharge payload:', userData);
     
     // Debounced spinner to avoid flicker on very fast responses
     if (this.spinnerTimeout) {

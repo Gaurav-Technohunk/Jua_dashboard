@@ -92,4 +92,20 @@ export class AuthService {
     }
     return null;
   }
+
+  getUserEmail(): string | null {
+    const payload = this.getUserPayload();
+    if (payload) {
+      return payload.email || payload.userEmail || null;
+    }
+    return null;
+  }
+
+  getOrgId(): string | null {
+    const payload = this.getUserPayload();
+    if (payload) {
+      return payload.orgId || payload.organizationId || payload.org_id || null;
+    }
+    return null;
+  }
 }

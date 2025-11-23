@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { redeemForm } from 'src/services/interface';
 import { RedeemService } from 'src/services/redeem.service';
 import { SnackbarService } from 'src/services/snackbar.service';
+import { AuthService } from 'src/services/auth.service';
 
 @Component({
   selector: 'app-manual-redeem',
@@ -18,6 +19,12 @@ export class ManualRedeemComponent implements OnInit {
   searchText: string = '';
   PlayerName: any = [];
   private spinnerTimeout: any;
+  
+  // Organization and user info
+  organizationsList: any[] = [];
+  currentUserEmail: string | null = null;
+  currentUserOrgId: string | null = null;
+  currentUserOrgName: string | null = null;
 
   labelName = [
     {
@@ -32,7 +39,8 @@ export class ManualRedeemComponent implements OnInit {
     private fb: FormBuilder,
     private redeemService: RedeemService,
     private snackbarService: SnackbarService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +49,92 @@ export class ManualRedeemComponent implements OnInit {
       amount: ['', Validators.required],
       selectGameName: ['', Validators.required],
     });
+    
+    // Load user info first, then fetch games
+    this.loadCurrentUserInfo();
     this.getGameName();
+  }
+
+  loadCurrentUserInfo(): void {
+    // Get admin email from JWT token
+    this.currentUserEmail = this.authService.getUserEmail();
+    
+    // Get orgId from JWT token
+    this.currentUserOrgId = this.authService.getOrgId();
+    
+    // If email or orgId not in token, try to get username and fetch admin user details
+    if (!this.currentUserEmail || !this.currentUserOrgId) {
+      const username = this.authService.getUsername();
+      if (username) {
+        console.warn('Email or orgId not found in token. Username:', username);
+        // Fetch admin user details to get email and orgId if not in token
+        this.fetchAdminUserEmail(username);
+      }
+    } else {
+      // If we have orgId, fetch organizations
+      this.fetchOrganizations();
+    }
+  }
+
+  fetchAdminUserEmail(username: string): void {
+    // Fetch admin user details to get email and orgId if not in token
+    this.redeemService.getAdminUsers().subscribe({
+      next: (response: any) => {
+        let adminUsers: any[] = [];
+        
+        if (Array.isArray(response)) {
+          adminUsers = response;
+        } else if (response && Array.isArray(response.data)) {
+          adminUsers = response.data;
+        }
+        
+        const currentUser = adminUsers.find((admin: any) => admin.username === username);
+        if (currentUser) {
+          if (currentUser.email && !this.currentUserEmail) {
+            this.currentUserEmail = currentUser.email;
+          }
+          if ((currentUser.orgId || currentUser.organizationId) && !this.currentUserOrgId) {
+            this.currentUserOrgId = currentUser.orgId || currentUser.organizationId;
+            // Now fetch organizations
+            this.fetchOrganizations();
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching admin user email:', error);
+      }
+    });
+  }
+
+  fetchOrganizations(): void {
+    // Only fetch if we have orgId to get orgName
+    if (this.currentUserOrgId) {
+      this.redeemService.getOrganizations().subscribe({
+        next: (response: any) => {
+          let organizations: any[] = [];
+          
+          if (Array.isArray(response)) {
+            organizations = response;
+          } else if (response && Array.isArray(response.data)) {
+            organizations = response.data;
+          } else if (response && Array.isArray(response.organizations)) {
+            organizations = response.organizations;
+          }
+          
+          // Find the current user's organization
+          const userOrg = organizations.find((org: any) => 
+            org.id === this.currentUserOrgId
+          );
+          
+          if (userOrg) {
+            this.currentUserOrgName = userOrg.name || null;
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching organizations:', error);
+        }
+      });
+    }
   }
 
   getGameName() {
@@ -111,6 +204,22 @@ export class ManualRedeemComponent implements OnInit {
       username: formData.userName.trim(),
       amount: formData.amount.trim(),
     };
+    
+    // Add essential fields from current logged-in user
+    if (this.currentUserEmail) {
+      data.adminEmail = this.currentUserEmail;
+    }
+    
+    if (this.currentUserOrgId) {
+      data.orgId = this.currentUserOrgId;
+    }
+    
+    if (this.currentUserOrgName) {
+      data.orgName = this.currentUserOrgName;
+    }
+    
+    // Debug: Log the payload being sent
+    console.log('Redeem payload:', data);
     
     // Debounced spinner to avoid flicker on very fast responses
     if (this.spinnerTimeout) {

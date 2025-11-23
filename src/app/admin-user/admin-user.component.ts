@@ -146,17 +146,26 @@ export class AdminUserComponent implements OnInit, OnDestroy {
             );
             
             // Handle different date field names - keep the raw value for formatting
-            const dateValue = admin.creationDateTime || admin.createdAt || admin.creationDate || admin.date || null;
+            // Check multiple possible date field names from API response
+            const dateValue = admin.creationDateTime || 
+                            admin.createdAt || 
+                            admin.creationDate || 
+                            admin.date || 
+                            admin.createdDateTime ||
+                            admin.timestamp ||
+                            null;
             
             // Debug: Log the date value to see what we're getting
             if (dateValue) {
-              console.log('Date value from API:', dateValue, 'Type:', typeof dateValue);
+              console.log('Date value from API for user', admin.username, ':', dateValue, 'Type:', typeof dateValue);
+            } else {
+              console.warn('No date value found for user:', admin.username, 'Available fields:', Object.keys(admin));
             }
             
             return {
               ...admin,
               organizationName: org ? org.name : (admin.organization?.name || 'N/A'),
-              creationDateTime: dateValue, // Keep raw value, formatDateTime will handle it
+              creationDateTime: dateValue || null, // Keep raw value, formatDateTime will handle it
             };
           });
 
@@ -497,17 +506,26 @@ export class AdminUserComponent implements OnInit, OnDestroy {
     try {
       // If it's already a Date object
       if (dateValue instanceof Date) {
+        if (isNaN(dateValue.getTime())) {
+          return 'N/A';
+        }
         return dateValue.toLocaleString();
       }
 
-      // If it's a number (timestamp)
+      // If it's a number (timestamp in seconds or milliseconds)
       if (typeof dateValue === 'number') {
-        return new Date(dateValue).toLocaleString();
+        // Check if it's in seconds (less than year 2000 in ms) or milliseconds
+        const timestamp = dateValue < 10000000000 ? dateValue * 1000 : dateValue;
+        const date = new Date(timestamp);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleString();
+        }
+        return 'N/A';
       }
 
       // If it's a string, try to parse it
       if (typeof dateValue === 'string') {
-        // Try ISO format first
+        // Try ISO format first (e.g., "2025-11-21T12:51:57.112+00:00")
         let date = new Date(dateValue);
         if (!isNaN(date.getTime())) {
           return date.toLocaleString();
@@ -523,7 +541,28 @@ export class AdminUserComponent implements OnInit, OnDestroy {
           }
         }
 
+        // Try format like "2025-11-21 17:35:38"
+        const dateTimeMatch2 = dateValue.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})/);
+        if (dateTimeMatch2) {
+          const [, year, month, day, hour, minute, second] = dateTimeMatch2;
+          date = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+          if (!isNaN(date.getTime())) {
+            return date.toLocaleString();
+          }
+        }
+
+        // Try to parse as timestamp string
+        const numValue = Number(dateValue);
+        if (!isNaN(numValue)) {
+          const timestamp = numValue < 10000000000 ? numValue * 1000 : numValue;
+          date = new Date(timestamp);
+          if (!isNaN(date.getTime())) {
+            return date.toLocaleString();
+          }
+        }
+
         // Return as is if we can't parse it
+        console.warn('Could not parse date string:', dateValue);
         return dateValue;
       }
 

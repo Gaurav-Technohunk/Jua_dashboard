@@ -2,12 +2,18 @@ export interface redeemForm {
   gameName: string;
   username: string;
   amount: string;
+  adminEmail?: string;
+  orgId?: string;
+  orgName?: string;
 }
 
 export interface creditLoad {
   gameName: string;
   username: string;
   coin: string;
+  adminEmail?: string;
+  orgId?: string;
+  orgName?: string;
 }
 
 export interface login {
