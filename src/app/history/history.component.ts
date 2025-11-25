@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { RedeemService } from 'src/services/redeem.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -14,6 +14,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class HistoryComponent implements OnInit {
   historyList: any[] = [];
   subscription: Subscription;
+  autoRefreshSubscription?: Subscription;
   displayedColumns: string[] = [
     'gameName',
     'username',
@@ -41,6 +42,7 @@ export class HistoryComponent implements OnInit {
   ngOnInit(): void {
     this.setupFilterPredicate();
     this.fetchHistory();
+    this.startAutoRefresh();
   }
 
   private setupFilterPredicate(): void {
@@ -53,6 +55,9 @@ export class HistoryComponent implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    if (this.autoRefreshSubscription) {
+      this.autoRefreshSubscription.unsubscribe();
+    }
     // Clear spinner timeout if component is destroyed
     if (this.spinnerTimeout) {
       clearTimeout(this.spinnerTimeout);
@@ -60,25 +65,38 @@ export class HistoryComponent implements OnInit {
     }
   }
 
-  fetchHistory() {
-    // Clear any existing timeout
-    if (this.spinnerTimeout) {
-      clearTimeout(this.spinnerTimeout);
+  private startAutoRefresh(): void {
+    if (this.autoRefreshSubscription) {
+      this.autoRefreshSubscription.unsubscribe();
     }
-    
-    // Show spinner only if loading takes more than 300ms
-    this.spinnerTimeout = setTimeout(() => {
-      this.spinner.show('mainSpinner');
-    }, 300);
+    this.autoRefreshSubscription = interval(10000).subscribe(() => {
+      this.fetchHistory(false);
+    });
+  }
+
+  fetchHistory(showSpinner: boolean = true) {
+    if (showSpinner) {
+      // Clear any existing timeout
+      if (this.spinnerTimeout) {
+        clearTimeout(this.spinnerTimeout);
+      }
+      
+      // Show spinner only if loading takes more than 300ms
+      this.spinnerTimeout = setTimeout(() => {
+        this.spinner.show('mainSpinner');
+      }, 300);
+    }
     
     this.redeemService.getHistoryDetails().subscribe({
       next: (res: any) => {
-        // Clear the timeout and hide spinner
-        if (this.spinnerTimeout) {
-          clearTimeout(this.spinnerTimeout);
-          this.spinnerTimeout = null;
+        if (showSpinner) {
+          // Clear the timeout and hide spinner
+          if (this.spinnerTimeout) {
+            clearTimeout(this.spinnerTimeout);
+            this.spinnerTimeout = null;
+          }
+          this.spinner.hide('mainSpinner');
         }
-        this.spinner.hide('mainSpinner');
         
         this.historyList = res;
         this.historyList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -89,12 +107,14 @@ export class HistoryComponent implements OnInit {
         this.dataSource.sort = this.sort;
       },
       error: (err) => {
-        // Clear the timeout and hide spinner on error
-        if (this.spinnerTimeout) {
-          clearTimeout(this.spinnerTimeout);
-          this.spinnerTimeout = null;
+        if (showSpinner) {
+          // Clear the timeout and hide spinner on error
+          if (this.spinnerTimeout) {
+            clearTimeout(this.spinnerTimeout);
+            this.spinnerTimeout = null;
+          }
+          this.spinner.hide('mainSpinner');
         }
-        this.spinner.hide('mainSpinner');
       }
     });
   }

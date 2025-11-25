@@ -81,7 +81,22 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     const userRole = this.getUserRole();
-    return userRole === role;
+    if (!userRole || !role) {
+      return false;
+    }
+    return userRole.toUpperCase() === role.toUpperCase();
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    if (!roles || roles.length === 0) {
+      return true;
+    }
+    const userRole = this.getUserRole();
+    if (!userRole) {
+      return false;
+    }
+    const normalizedUserRole = userRole.toUpperCase();
+    return roles.some((role) => normalizedUserRole === role.toUpperCase());
   }
 
   getUsername(): string | null {

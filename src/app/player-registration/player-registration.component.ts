@@ -34,7 +34,45 @@ export class PlayerRegistrationComponent implements OnInit {
   getGameList() {
     this.redeemService.getGameName().subscribe(
       (response: any) => {
-        this.gameList = response;
+        let games: any[] = [];
+
+        if (Array.isArray(response)) {
+          games = response;
+        } else if (response && Array.isArray(response.data)) {
+          games = response.data;
+        } else if (response && Array.isArray(response.games)) {
+          games = response.games;
+        } else if (response && typeof response === 'object') {
+          games = Object.values(response);
+        }
+
+        const uniqueGameNameMap = new Map<string, string>();
+        games.forEach((item: any) => {
+          const rawName =
+            typeof item === 'string'
+              ? item
+              : item && typeof item === 'object'
+              ? item.gameName
+              : null;
+
+          if (!rawName) {
+            return;
+          }
+
+          const trimmedName = String(rawName).trim();
+          if (!trimmedName) {
+            return;
+          }
+
+          const normalizedName = trimmedName.toLowerCase();
+          if (!uniqueGameNameMap.has(normalizedName)) {
+            uniqueGameNameMap.set(normalizedName, trimmedName);
+          }
+        });
+
+        this.gameList = Array.from(uniqueGameNameMap.values()).sort((a, b) =>
+          a.localeCompare(b)
+        );
       },
       () => {
         this.snackbarService.openSnackbar(

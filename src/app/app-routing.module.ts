@@ -23,6 +23,7 @@ const routes: Routes = [
     path: 'dashboard',
     component: MainLayoutComponent,
     canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'form', pathMatch: 'full' },
       {
@@ -64,11 +65,13 @@ const routes: Routes = [
         path: 'organization',
         component: OrganizationComponent,
         canActivate: [AuthGuard],
+        data: { roles: ['SUPER_ADMIN'] },
       },
       {
         path: 'admin-user',
         component: AdminUserComponent,
         canActivate: [AuthGuard],
+        data: { roles: ['SUPER_ADMIN'] },
       }
     ],
   },

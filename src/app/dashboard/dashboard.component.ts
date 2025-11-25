@@ -277,8 +277,24 @@ export class DashboardComponent implements OnInit {
         }
         // Super admin sees all active games (no filtering needed)
         
-        // Extract unique game names and sort them
-        const uniqueGameNames = [...new Set(games.map((game: any) => game.gameName).filter(Boolean))];
+        // Extract unique game names and sort them (trim + case-insensitive)
+        const uniqueGameNameMap = new Map<string, string>();
+        games.forEach((game: any) => {
+          if (!game || !game.gameName) {
+            return;
+          }
+          const trimmedName = String(game.gameName).trim();
+          if (!trimmedName) {
+            return;
+          }
+          const normalizedName = trimmedName.toLowerCase();
+          if (!uniqueGameNameMap.has(normalizedName)) {
+            uniqueGameNameMap.set(normalizedName, trimmedName);
+          }
+        });
+        const uniqueGameNames = Array.from(uniqueGameNameMap.values()).sort((a, b) =>
+          a.localeCompare(b)
+        );
         
         // Clear and set gameList to ensure Angular detects the change
         this.gameList = [];

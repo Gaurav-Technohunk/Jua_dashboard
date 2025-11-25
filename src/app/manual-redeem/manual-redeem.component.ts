@@ -52,7 +52,6 @@ export class ManualRedeemComponent implements OnInit {
     
     // Load user info first, then fetch games
     this.loadCurrentUserInfo();
-    this.getGameName();
   }
 
   loadCurrentUserInfo(): void {
@@ -69,10 +68,13 @@ export class ManualRedeemComponent implements OnInit {
         console.warn('Email or orgId not found in token. Username:', username);
         // Fetch admin user details to get email and orgId if not in token
         this.fetchAdminUserEmail(username);
+      } else {
+        this.initializeGames();
       }
     } else {
       // If we have orgId, fetch organizations
       this.fetchOrganizations();
+      this.initializeGames();
     }
   }
 
@@ -99,9 +101,11 @@ export class ManualRedeemComponent implements OnInit {
             this.fetchOrganizations();
           }
         }
+        this.initializeGames();
       },
       error: (error) => {
         console.error('Error fetching admin user email:', error);
+        this.initializeGames();
       }
     });
   }
@@ -137,9 +141,141 @@ export class ManualRedeemComponent implements OnInit {
     }
   }
 
+  initializeGames(): void {
+    if (this.authService.isOrgAdmin() || this.authService.isSuperAdmin()) {
+      if (this.currentUserOrgId || this.currentUserOrgName) {
+        this.fetchGamesFromGameList();
+      } else {
+        setTimeout(() => {
+          this.fetchGamesFromGameList();
+        }, 800);
+      }
+    } else {
+      this.getGameName();
+    }
+  }
+
   getGameName() {
-    this.redeemService.getGameName().subscribe((response: any) => {
-      this.gameList = response;
+    if (this.authService.isOrgAdmin() || this.authService.isSuperAdmin()) {
+      this.fetchGamesFromGameList();
+      return;
+    }
+
+    this.redeemService.getGameName().subscribe({
+      next: (response: any) => {
+        let games: any[] = [];
+
+        if (Array.isArray(response)) {
+          games = response;
+        } else if (response && Array.isArray(response.data)) {
+          games = response.data;
+        } else if (response && Array.isArray(response.games)) {
+          games = response.games;
+        } else if (response && typeof response === 'object') {
+          games = Object.values(response);
+        }
+
+        const uniqueGameNameMap = new Map<string, string>();
+        games.forEach((item: any) => {
+          const rawName =
+            typeof item === 'string'
+              ? item
+              : item && typeof item === 'object'
+              ? item.gameName
+              : null;
+
+          if (!rawName) {
+            return;
+          }
+
+          const trimmedName = String(rawName).trim();
+          if (!trimmedName) {
+            return;
+          }
+
+          const normalizedName = trimmedName.toLowerCase();
+          if (!uniqueGameNameMap.has(normalizedName)) {
+            uniqueGameNameMap.set(normalizedName, trimmedName);
+          }
+        });
+
+        this.gameList = Array.from(uniqueGameNameMap.values()).sort((a, b) =>
+          a.localeCompare(b)
+        );
+
+        if (this.gameList.length === 0) {
+          this.fetchGamesFromGameList();
+        }
+      },
+      error: () => {
+        this.fetchGamesFromGameList();
+      }
+    });
+  }
+
+  fetchGamesFromGameList(): void {
+    this.redeemService.fetchGameList().subscribe({
+      next: (response: any) => {
+        let games: any[] = [];
+
+        if (Array.isArray(response)) {
+          games = response;
+        } else if (response && Array.isArray(response.data)) {
+          games = response.data;
+        }
+
+        games = games.filter((game: any) => game.status !== false);
+        const originalGames = [...games];
+
+        if (this.authService.isOrgAdmin()) {
+          if (this.currentUserOrgId || this.currentUserOrgName) {
+            const filteredGames = games.filter((game: any) => {
+              const matchesOrgId = this.currentUserOrgId && (
+                game.orgId === this.currentUserOrgId ||
+                game.organizationId === this.currentUserOrgId
+              );
+
+              let matchesOrgName = false;
+              if (this.currentUserOrgName && game.orgName) {
+                const userOrgName = this.currentUserOrgName.trim().toLowerCase();
+                const gameOrgName = game.orgName.trim().toLowerCase();
+                matchesOrgName =
+                  userOrgName === gameOrgName ||
+                  userOrgName.includes(gameOrgName) ||
+                  gameOrgName.includes(userOrgName);
+              }
+
+              return matchesOrgId || matchesOrgName;
+            });
+
+            games = filteredGames.length === 0 ? originalGames : filteredGames;
+          }
+        }
+
+        const uniqueGameNameMap = new Map<string, string>();
+        games.forEach((game: any) => {
+          if (!game || !game.gameName) {
+            return;
+          }
+          const trimmedName = String(game.gameName).trim();
+          if (!trimmedName) {
+            return;
+          }
+          const normalizedName = trimmedName.toLowerCase();
+          if (!uniqueGameNameMap.has(normalizedName)) {
+            uniqueGameNameMap.set(normalizedName, trimmedName);
+          }
+        });
+
+        this.gameList = Array.from(uniqueGameNameMap.values()).sort((a, b) =>
+          a.localeCompare(b)
+        );
+      },
+      error: (error) => {
+        console.error('Error fetching games from game list:', error);
+        this.gameList = [];
+        this.snackbarService.openSnackbar('Failed to load games.', 'failed');
+      }
     });
   }
   selectedGameName(gameName: string) {
