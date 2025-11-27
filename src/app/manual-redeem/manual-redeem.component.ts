@@ -379,6 +379,7 @@ export class ManualRedeemComponent implements OnInit {
               'You have been successfully Redeem',
               'success'
             );
+            this.redeemService.reloadComponent1();
             this.resetForm();
           }
         },

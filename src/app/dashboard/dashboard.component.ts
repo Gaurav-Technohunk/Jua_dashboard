@@ -454,6 +454,7 @@ export class DashboardComponent implements OnInit {
                 'You have been successfully add credit Load',
                 'success'
               );
+              this.redeemService.reloadComponent1();
             }
             this.resetForm();
           }

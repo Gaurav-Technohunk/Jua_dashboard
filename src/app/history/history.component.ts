@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription, interval } from 'rxjs';
 import { RedeemService } from 'src/services/redeem.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-history',
@@ -98,7 +99,10 @@ export class HistoryComponent implements OnInit {
           this.spinner.hide('mainSpinner');
         }
         
-        this.historyList = res;
+        this.historyList = (res || []).map((entry: any) => ({
+          ...entry,
+          displayDate: this.formatToCst(entry?.date),
+        }));
         this.historyList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         this.dataSource = new MatTableDataSource(this.historyList);
         // Re-apply filter predicate after creating new dataSource
@@ -126,5 +130,18 @@ export class HistoryComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  private formatToCst(dateValue: string | Date): string {
+    if (!dateValue) {
+      return '';
+    }
+
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) {
+      return String(dateValue);
+    }
+
+    return formatDate(date, 'MMM d, y, h:mm:ss a', 'en-US', 'America/Chicago');
   }
 }

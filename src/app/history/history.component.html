@@ -94,7 +94,7 @@
             >
               <div class="cell-content">
                 <mat-icon class="cell-icon">schedule</mat-icon>
-                <span class="cell-text">{{ element.date }}</span>
+                <span class="cell-text">{{ element.displayDate || element.date }}</span>
               </div>
             </td>
           </ng-container>
@@ -224,7 +224,7 @@
             </div>
             <div class="date-chip">
               <mat-icon>calendar_today</mat-icon>
-              <span>{{ element.date }}</span>
+              <span>{{ element.displayDate || element.date }}</span>
             </div>
           </div>
 
