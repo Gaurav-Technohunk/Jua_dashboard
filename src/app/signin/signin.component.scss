@@ -88,16 +88,67 @@
   h1 {
     font-size: 28px;
     font-weight: 700;
-    color: #1a202c;
+    color: var(--text-primary);
     margin: 0 0 8px 0;
     letter-spacing: -0.5px;
   }
   
   p {
     font-size: 15px;
-    color: #718096;
+    color: var(--text-secondary);
     margin: 0;
     font-weight: 400;
+  }
+}
+
+/* Dark theme specific tweaks */
+:host-context([data-theme='dark']) {
+  .bg-container {
+    background: radial-gradient(circle at top left, rgba(148, 163, 253, 0.35), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(244, 114, 182, 0.3), transparent 55%),
+                linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-secondary) 100%);
+  }
+
+  .form-container {
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .login-header {
+    h1 {
+      color: var(--text-primary);
+    }
+
+    p {
+      color: var(--text-tertiary);
+    }
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+      color: var(--border-color);
+    }
+
+    .mat-form-field-label {
+      color: var(--text-tertiary);
+    }
+
+    &.mat-focused .mat-form-field-label {
+      color: var(--brand-primary);
+    }
+
+    .mat-form-field-prefix {
+      color: var(--text-tertiary);
+    }
+
+    &.mat-focused .mat-form-field-prefix {
+      color: var(--brand-primary);
+    }
+  }
+
+  .login-button {
+    box-shadow: var(--shadow-md);
   }
 }
 
