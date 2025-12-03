@@ -55,11 +55,13 @@ const routes: Routes = [
         path: 'player-registration',
         component: PlayerRegistrationComponent,
         canActivate: [AuthGuard],
+        data: { roles: ['ORG_ADMIN'] },
       },
       {
         path: 'player-list',
         component: PlayerListComponent,
         canActivate: [AuthGuard],
+        data: { roles: ['SUPER_ADMIN', 'ORG_ADMIN'] },
       },
       {
         path: 'organization',

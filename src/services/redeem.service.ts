@@ -38,6 +38,13 @@ export class RedeemService {
     );
   }
 
+  /**
+   * Delete a game by game ID.
+   */
+  deleteGame(gameId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/customer/game/${gameId}`);
+  }
+
   getGameName() {
     return this.http.get(this.apiUrl + '/api/customer/games');
   }
@@ -60,6 +67,28 @@ export class RedeemService {
 
   fetchPlayersList(): Observable<any> {
     return this.http.get(`${this.apiUrl}/players`);
+  }
+
+  /**
+   * Fetch players created by the currently authenticated OrgAdmin.
+   * Backend resolves "me" from the JWT.
+   */
+  fetchPlayersCreatedByMe(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/players/createdBy/me`);
+  }
+
+  /**
+   * Update a player (OrgAdmin only, backend enforces permissions).
+   */
+  updatePlayer(playerId: string, data: { plUname: string; gameName: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/players/${playerId}`, data);
+  }
+
+  /**
+   * Delete a player (OrgAdmin only, backend enforces permissions).
+   */
+  deletePlayer(playerId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/players/${playerId}`);
   }
 
   uploadCsv(formData: FormData) {

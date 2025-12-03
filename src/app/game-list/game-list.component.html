@@ -163,6 +163,15 @@
               >
                 <mat-icon>edit</mat-icon>
               </button>
+              <button
+                mat-icon-button
+                (click)="confirmDeleteGame(element.id, element.gameName)"
+                color="warn"
+                matTooltip="Delete Game"
+                class="delete-button"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
             </td>
           </ng-container>
 
@@ -183,15 +192,26 @@
                   <span class="user-name">&#64;{{ element.userName }}</span>
                 </div>
               </div>
-              <button
-                mat-icon-button
-                (click)="openEditModal(element.id)"
-                color="primary"
-                matTooltip="Edit Record"
-                class="edit-button"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
+              <div class="card-actions">
+                <button
+                  mat-icon-button
+                  (click)="openEditModal(element.id)"
+                  color="primary"
+                  matTooltip="Edit Record"
+                  class="edit-button"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="confirmDeleteGame(element.id, element.gameName)"
+                  color="warn"
+                  matTooltip="Delete Game"
+                  class="delete-button"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
             </div>
 
             <div class="card-row">

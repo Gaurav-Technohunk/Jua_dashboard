@@ -280,7 +280,27 @@ export class ManualRedeemComponent implements OnInit {
   }
   selectedGameName(gameName: string) {
     this.redeemService.searchPlayers(gameName).subscribe((response: any) => {
-      this.playerList = response;
+      let players: any[] = Array.isArray(response)
+        ? response
+        : response && Array.isArray(response.data)
+        ? response.data
+        : [];
+
+      // For OrgAdmin, show only players they created (by username)
+      if (this.authService.isOrgAdmin()) {
+        const currentUsername = this.authService.getUsername();
+        if (currentUsername) {
+          players = players.filter(
+            (player: any) =>
+              (player.createdBy && player.createdBy === currentUsername) ||
+              (player.createdByUsername &&
+                player.createdByUsername === currentUsername) ||
+              (player.created_by && player.created_by === currentUsername)
+          );
+        }
+      }
+
+      this.playerList = players;
       this.filterPlayers = [];
     });
   }

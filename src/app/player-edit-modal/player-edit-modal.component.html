@@ -1,0 +1,81 @@
+<div class="edit-modal-container">
+  <div class="modal-header">
+    <div class="icon-container">
+      <div class="icon-circle">
+        <mat-icon class="header-icon">edit</mat-icon>
+      </div>
+    </div>
+    <h2 class="modal-title">Edit Player</h2>
+  </div>
+
+  <form [formGroup]="playerForm" class="modal-form">
+    <div class="form-container">
+      <!-- Game Name Field (read-only) -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">sports_esports</mat-icon>
+          Game Name (read-only)
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="gameName"
+            readonly
+          />
+        </mat-form-field>
+      </div>
+
+      <!-- Player Username Field -->
+      <div class="form-field-group">
+        <mat-label class="field-label">
+          <mat-icon class="label-icon">person</mat-icon>
+          Player Username
+        </mat-label>
+        <mat-form-field appearance="outline" class="custom-form-field">
+          <input
+            matInput
+            type="text"
+            formControlName="plUname"
+            placeholder="Enter player username"
+          />
+        </mat-form-field>
+        <mat-error
+          *ngIf="
+            playerForm.controls.plUname.touched &&
+            playerForm.controls.plUname.invalid
+          "
+          class="error-message"
+        >
+          <mat-icon class="error-icon">error</mat-icon>
+          <span *ngIf="playerForm.controls.plUname.errors?.['required']"
+            >This field is mandatory</span
+          >
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        mat-flat-button
+        mat-dialog-close
+        class="cancel-button"
+      >
+        <span>Cancel</span>
+      </button>
+      <button
+        type="button"
+        mat-flat-button
+        (click)="onSubmit()"
+        class="update-button"
+        [disabled]="playerForm.invalid"
+      >
+        <mat-icon class="button-icon">save</mat-icon>
+        <span>Update</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+

@@ -44,6 +44,7 @@ import { OrganizationDeleteModalComponent } from './organization-delete-modal/or
 import { AdminUserComponent } from './admin-user/admin-user.component';
 import { AdminUserEditModalComponent } from './admin-user-edit-modal/admin-user-edit-modal.component';
 import { AdminUserDeleteModalComponent } from './admin-user-delete-modal/admin-user-delete-modal.component';
+import { PlayerEditModalComponent } from './player-edit-modal/player-edit-modal.component';
 
 const modules = [
   MatSidenavModule,
@@ -88,6 +89,7 @@ const modules = [
     AdminUserComponent,
     AdminUserEditModalComponent,
     AdminUserDeleteModalComponent,
+    PlayerEditModalComponent,
   ],
   imports: [
     BrowserModule,

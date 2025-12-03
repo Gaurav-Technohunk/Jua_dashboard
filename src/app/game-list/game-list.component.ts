@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { RedeemService } from 'src/services/redeem.service';
 import { GameEditModalComponent } from '../game-edit-modal/game-edit-modal.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { SnackbarService } from 'src/services/snackbar.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-game-list',
@@ -38,7 +40,8 @@ export class GameListComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private redeemService: RedeemService,
     private dialog: MatDialog,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private snackbarService: SnackbarService
   ) {
     this.subscription = redeemService.reloadComponent1$.subscribe(() => {
       this.fetchGameList();
@@ -118,6 +121,73 @@ export class GameListComponent implements OnInit, AfterViewInit, OnDestroy {
       panelClass: 'edit-game-dialog',
       autoFocus: false,
       disableClose: false,
+    });
+  }
+
+  confirmDeleteGame(gameId: string, gameName: string): void {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the game "${gameName}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    // Show spinner
+    if (this.spinnerTimeout) {
+      clearTimeout(this.spinnerTimeout);
+    }
+    this.spinnerTimeout = setTimeout(() => {
+      this.spinner.show('mainSpinner');
+    }, 300);
+
+    this.redeemService.deleteGame(gameId).subscribe({
+      next: () => {
+        if (this.spinnerTimeout) {
+          clearTimeout(this.spinnerTimeout);
+          this.spinnerTimeout = null;
+        }
+        this.spinner.hide('mainSpinner');
+        this.snackbarService.openSnackbar(
+          'Game deleted successfully!',
+          'success'
+        );
+        this.fetchGameList(); // Refresh the list
+      },
+      error: (error: HttpErrorResponse) => {
+        if (this.spinnerTimeout) {
+          clearTimeout(this.spinnerTimeout);
+          this.spinnerTimeout = null;
+        }
+        this.spinner.hide('mainSpinner');
+        
+        let errorMessage = '';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
+        if (error.status === 404) {
+          const message = errorMessage || 'Game not found. Please refresh and try again.';
+          this.snackbarService.openSnackbar(message, 'failed');
+        } else if (error.status === 401) {
+          this.snackbarService.openSnackbar(
+            'You are not authorized. Please log in again.',
+            'failed'
+          );
+        } else if (error.status === 403) {
+          this.snackbarService.openSnackbar(
+            'You do not have permission to delete games.',
+            'failed'
+          );
+        } else {
+          const message = errorMessage || 'Failed to delete game. Please try again.';
+          this.snackbarService.openSnackbar(message, 'failed');
+        }
+      },
     });
   }
 

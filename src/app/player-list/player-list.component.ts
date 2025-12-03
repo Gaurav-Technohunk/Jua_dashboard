@@ -4,6 +4,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { RedeemService } from 'src/services/redeem.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { AuthService } from 'src/services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from 'src/services/snackbar.service';
+import { PlayerEditModalComponent } from '../player-edit-modal/player-edit-modal.component';
 
 @Component({
   selector: 'app-player-list',
@@ -16,6 +20,8 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
   searchTerm: string = ''; // Holds the search term
   displayedColumns: string[] = ['plUname']; // Columns to display
   dataSource = new MatTableDataSource<any>(); // Create a MatTableDataSource instance
+  isSuperAdmin = false;
+  isOrgAdmin = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Reference to paginator
   @ViewChild(MatSort) sort!: MatSort; // Reference to sort
@@ -23,10 +29,23 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private redeemService: RedeemService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private authService: AuthService,
+    private dialog: MatDialog,
+    private snackbarService: SnackbarService
   ) {}
 
   ngOnInit(): void {
+    // Determine if current user is SUPER_ADMIN to adjust columns/UI
+    this.isSuperAdmin = this.authService.isSuperAdmin();
+    this.isOrgAdmin = this.authService.isOrgAdmin();
+    if (this.isSuperAdmin && !this.displayedColumns.includes('createdBy')) {
+      this.displayedColumns = [...this.displayedColumns, 'createdBy'];
+    }
+    if (this.isOrgAdmin && !this.displayedColumns.includes('actions')) {
+      this.displayedColumns = [...this.displayedColumns, 'actions'];
+    }
+
     this.getPlayers(); // Fetch players on component initialization
   }
 
@@ -55,8 +74,14 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.spinnerTimeout = setTimeout(() => {
       this.spinner.show('mainSpinner');
     }, 300);
-    
-    this.redeemService.fetchPlayersList().subscribe({
+
+    const isSuperAdmin = this.authService.isSuperAdmin();
+
+    const request$ = isSuperAdmin
+      ? this.redeemService.fetchPlayersList()         // SUPER_ADMIN: see all players
+      : this.redeemService.fetchPlayersCreatedByMe(); // ORG_ADMIN: only their created players
+
+    request$.subscribe({
       next: (players: any[]) => {
         // Clear the timeout and hide spinner
         if (this.spinnerTimeout) {
@@ -115,6 +140,45 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource.sort = this.sort;
   }
 
+  // Resolve "created by" username from possible backend fields
+  getCreatedBy(player: any): string {
+    if (!player) {
+      return '-';
+    }
+    return (
+      player.createdBy ||
+      player.createdByUsername ||
+      player.createdByUser ||
+      player.createdByOrgAdmin ||
+      player.created_by ||
+      '-'
+    );
+  }
+
+  // Resolve player id from any id-like field
+  private resolvePlayerId(player: any): string | null {
+    if (!player) {
+      return null;
+    }
+
+    const directId =
+      player.id ||
+      player.playerId ||
+      player._id ||
+      player.plId ||
+      player.player_id;
+
+    if (directId) {
+      return String(directId);
+    }
+
+    const idKey = Object.keys(player).find((key) =>
+      key.toLowerCase().includes('id')
+    );
+
+    return idKey ? String(player[idKey]) : null;
+  }
+
   // Helper function to get object keys (for iteration in *ngFor)
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
@@ -122,5 +186,67 @@ export class PlayerListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   trackPlayerBy(index: number, player: any) {
     return player?.plUname ?? index;
+  }
+
+  openEditPlayerModal(_playerId: string, player: any): void {
+    if (!this.isOrgAdmin) {
+      return;
+    }
+
+    const playerId = this.resolvePlayerId(player);
+
+    const dialogRef = this.dialog.open(PlayerEditModalComponent, {
+      width: '450px',
+      maxWidth: '90vw',
+      data: { player, playerId },
+      autoFocus: false,
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((updated: boolean) => {
+      if (updated) {
+        this.getPlayers();
+      }
+    });
+  }
+
+  confirmDeletePlayer(_playerId: string, playerName: string, player?: any): void {
+    if (!this.isOrgAdmin) {
+      return;
+    }
+
+    const playerId = player ? this.resolvePlayerId(player) : _playerId;
+
+    if (!playerId) {
+      this.snackbarService.openSnackbar(
+        'Player identifier is missing. Cannot delete player.',
+        'failed'
+      );
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete player "${playerName}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.redeemService.deletePlayer(playerId).subscribe({
+      next: () => {
+        this.snackbarService.openSnackbar(
+          'Player deleted successfully!',
+          'success'
+        );
+        this.getPlayers();
+      },
+      error: () => {
+        this.snackbarService.openSnackbar(
+          'Failed to delete player. Please try again.',
+          'failed'
+        );
+      },
+    });
   }
 }

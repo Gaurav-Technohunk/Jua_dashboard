@@ -64,6 +64,7 @@
         mat-list-item
         routerLink="player-registration"
         routerLinkActive="list-item-active"
+        *ngIf="isOrgAdmin"
         (click)="onNavClick()"
       >
         <span>
@@ -71,16 +72,17 @@
         </span>
       </a>
       <a
-      class="mat-list-item mb-2"
-      mat-list-item
-      routerLink="player-list"
-      routerLinkActive="list-item-active"
-      (click)="onNavClick()"
-    >
-      <span>
-        <mat-icon class="mat-icon">person</mat-icon> Player's List
-      </span>
-    </a>
+        class="mat-list-item mb-2"
+        mat-list-item
+        routerLink="player-list"
+        routerLinkActive="list-item-active"
+        *ngIf="isSuperAdmin || isOrgAdmin"
+        (click)="onNavClick()"
+      >
+        <span>
+          <mat-icon class="mat-icon">person</mat-icon> Player's List
+        </span>
+      </a>
       <!-- Super Admin Only: Organization Management -->
       <a
         *ngIf="isSuperAdmin"

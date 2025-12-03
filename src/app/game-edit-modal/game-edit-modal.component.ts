@@ -19,6 +19,8 @@ export class GameEditModalComponent implements OnInit, OnDestroy {
   organizations: any[] = [];
   hidePassword: boolean = true;
   private destroy$ = new Subject<void>();
+  existingGames: any[] = [];
+  currentGameId: string | null = null;
   
   constructor(
     private fb: FormBuilder,
@@ -41,8 +43,10 @@ export class GameEditModalComponent implements OnInit, OnDestroy {
       status: [true],
     });
     
+    this.currentGameId = this.data?.gameId || null;
     this.fetchOrganizations();
     this.fetchGameDetails();
+    this.fetchExistingGames();
   }
 
   ngOnDestroy(): void {
@@ -122,6 +126,44 @@ export class GameEditModalComponent implements OnInit, OnDestroy {
       });
   }
 
+  fetchExistingGames(): void {
+    this.redeemService
+      .fetchGameList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.existingGames = Array.isArray(response) ? response : [];
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error fetching existing games:', error);
+          this.existingGames = [];
+        },
+      });
+  }
+
+  checkForDuplicate(gameName: string, orgName: string, adminEmail: string): boolean {
+    const normalizedGameName = (gameName || '').trim().toLowerCase();
+    const normalizedOrgName = (orgName || '').trim().toLowerCase();
+    const normalizedAdminEmail = (adminEmail || '').trim().toLowerCase();
+
+    return this.existingGames.some((game: any) => {
+      // Exclude the current game being edited
+      if (this.currentGameId && (game.id === this.currentGameId || game._id === this.currentGameId)) {
+        return false;
+      }
+
+      const existingGameName = (game.gameName || '').trim().toLowerCase();
+      const existingOrgName = (game.orgName || '').trim().toLowerCase();
+      const existingAdminEmail = (game.adminEmail || '').trim().toLowerCase();
+
+      return (
+        existingGameName === normalizedGameName &&
+        existingOrgName === normalizedOrgName &&
+        existingAdminEmail === normalizedAdminEmail
+      );
+    });
+  }
+
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
   }
@@ -163,15 +205,28 @@ export class GameEditModalComponent implements OnInit, OnDestroy {
     }
 
     const formData = this.settingForm.value;
+    const gameName = formData.gameName.trim();
+    const orgName = formData.orgName.trim();
+    const adminEmail = formData.adminEmail.trim().toLowerCase();
+
+    // Check for duplicate combination of gameName + orgName + adminEmail
+    if (this.checkForDuplicate(gameName, orgName, adminEmail)) {
+      this.snackbarService.openSnackbar(
+        'A game with the same Game Name, Organization, and Admin Email already exists. Please use different values.',
+        'failed'
+      );
+      return;
+    }
+
     const data: any = {
       id: this.data.gameId.trim(),
-      orgName: formData.orgName.trim(),
-      gameName: formData.gameName.trim(),
+      orgName: orgName,
+      gameName: gameName,
       userName: formData.userName.trim(),
       gameUrl: formData.gameUrl.trim(),
       prefix: formData.prefix.trim(),
       suffix: formData.suffix.trim(),
-      adminEmail: formData.adminEmail.trim().toLowerCase(),
+      adminEmail: adminEmail,
       status: formData.status !== undefined ? formData.status : true,
     };
 

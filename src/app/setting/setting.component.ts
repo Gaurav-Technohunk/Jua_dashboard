@@ -20,6 +20,7 @@ export class SettingComponent implements OnInit, OnDestroy {
   hidePassword: boolean = true;
   private destroy$ = new Subject<void>();
   spinnerTimeout: any = null;
+  existingGames: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +43,7 @@ export class SettingComponent implements OnInit, OnDestroy {
     });
     
     this.fetchOrganizations();
+    this.fetchExistingGames();
   }
 
   ngOnDestroy(): void {
@@ -89,6 +91,39 @@ export class SettingComponent implements OnInit, OnDestroy {
       });
   }
 
+  fetchExistingGames(): void {
+    this.redeemService
+      .fetchGameList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.existingGames = Array.isArray(response) ? response : [];
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error fetching existing games:', error);
+          this.existingGames = [];
+        },
+      });
+  }
+
+  checkForDuplicate(gameName: string, orgName: string, adminEmail: string): boolean {
+    const normalizedGameName = (gameName || '').trim().toLowerCase();
+    const normalizedOrgName = (orgName || '').trim().toLowerCase();
+    const normalizedAdminEmail = (adminEmail || '').trim().toLowerCase();
+
+    return this.existingGames.some((game: any) => {
+      const existingGameName = (game.gameName || '').trim().toLowerCase();
+      const existingOrgName = (game.orgName || '').trim().toLowerCase();
+      const existingAdminEmail = (game.adminEmail || '').trim().toLowerCase();
+
+      return (
+        existingGameName === normalizedGameName &&
+        existingOrgName === normalizedOrgName &&
+        existingAdminEmail === normalizedAdminEmail
+      );
+    });
+  }
+
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
   }
@@ -131,15 +166,28 @@ export class SettingComponent implements OnInit, OnDestroy {
     }
 
     const formData = this.settingForm.value;
+    const gameName = formData.gameName.trim();
+    const orgName = formData.orgName.trim();
+    const adminEmail = formData.adminEmail.trim().toLowerCase();
+
+    // Check for duplicate combination of gameName + orgName + adminEmail
+    if (this.checkForDuplicate(gameName, orgName, adminEmail)) {
+      this.snackbarService.openSnackbar(
+        'A game with the same Game Name, Organization, and Admin Email already exists. Please use different values.',
+        'failed'
+      );
+      return;
+    }
+
     const data: settingForm = {
-      orgName: formData.orgName.trim(),
-      gameName: formData.gameName.trim(),
+      orgName: orgName,
+      gameName: gameName,
       userName: formData.userName.trim(),
       password: formData.password.trim(),
       gameUrl: formData.gameUrl.trim(),
       prefix: formData.prefix.trim(),
       suffix: formData.suffix.trim(),
-      adminEmail: formData.adminEmail.trim().toLowerCase(),
+      adminEmail: adminEmail,
       status: formData.status !== undefined ? formData.status : this.isChecked,
     };
 
@@ -167,6 +215,7 @@ export class SettingComponent implements OnInit, OnDestroy {
               'Settings updated successfully!',
               'success'
             );
+            this.fetchExistingGames(); // Refresh existing games list
             this.resetForm();
           }
         },

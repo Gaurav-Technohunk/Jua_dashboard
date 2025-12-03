@@ -57,6 +57,49 @@
               </mat-cell>
             </ng-container>
 
+            <!-- Created By Column (Super Admin only) -->
+            <ng-container *ngIf="isSuperAdmin" matColumnDef="createdBy">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">admin_panel_settings</mat-icon>
+                  <span>Created By</span>
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let player">
+                <div class="cell-content">
+                  <mat-icon class="cell-icon">person</mat-icon>
+                  <span class="cell-text">{{ getCreatedBy(player) }}</span>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <!-- Actions Column (OrgAdmin only) -->
+            <ng-container *ngIf="isOrgAdmin" matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef>
+                <div class="header-cell-content">
+                  <mat-icon class="header-icon">build</mat-icon>
+                  <span>Actions</span>
+                </div>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let player">
+                <button
+                  mat-icon-button
+                  matTooltip="Edit player"
+                  (click)="openEditPlayerModal(player.id, player)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  matTooltip="Delete player"
+                  (click)="confirmDeletePlayer(player.id, player.plUname, player)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+
             <mat-header-row *matHeaderRowDef="displayedColumns" class="table-header-row"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
           </mat-table>
@@ -71,6 +114,38 @@
               <div class="value">
                 <mat-icon>account_circle</mat-icon>
                 <span>{{ player.plUname }}</span>
+              </div>
+            </div>
+
+            <!-- Created By info for Super Admin (card view) -->
+            <div class="card-row" *ngIf="isSuperAdmin">
+              <span class="label">Created By</span>
+              <div class="value">
+                <mat-icon>admin_panel_settings</mat-icon>
+                <span>{{ getCreatedBy(player) }}</span>
+              </div>
+            </div>
+
+            <!-- Actions for OrgAdmin (card view) -->
+            <div class="card-row actions-row" *ngIf="isOrgAdmin">
+              <span class="label">Actions</span>
+              <div class="value actions-buttons">
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  (click)="openEditPlayerModal(player.id, player)"
+                >
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  (click)="confirmDeletePlayer(player.id, player.plUname, player)"
+                >
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
               </div>
             </div>
           </div>
